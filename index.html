@@ -1,0 +1,2150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Security Resource Page — AI-Powered Partner Toolkit (Prototype)</title>
+<script>
+  (() => {
+    const param = new URLSearchParams(window.location.search).get("clawpilotTheme");
+    const theme =
+      param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  })();
+</script>
+<style>
+  :root {
+    color-scheme: light;
+    --cp-bg: #f7f4ef;
+    --cp-bg-elevated: #fcfbf8;
+    --cp-surface: #ffffff;
+    --cp-surface-soft: #f5f5f5;
+    --cp-border: #dedede;
+    --cp-border-strong: #919191;
+    --cp-text: #242424;
+    --cp-text-muted: #5c5c5c;
+    --cp-text-soft: #6f6f6f;
+    --cp-accent: #b11f4b;
+    --cp-accent-hover: #9a1a41;
+    --cp-accent-soft: rgba(177, 31, 75, 0.08);
+    --cp-accent-fg: #ffffff;
+    --cp-success: #16a34a;
+    --cp-danger: #dc2626;
+    --cp-warning: #f59e0b;
+    --cp-link: #0078d4;
+    --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+    --cp-overlay: rgba(255, 255, 255, 0.8);
+    --cp-panel: rgba(255, 255, 255, 0.86);
+    --cp-panel-strong: rgba(255, 255, 255, 0.96);
+    --cp-sheen: rgba(255, 255, 255, 0.55);
+    --cp-highlight: rgba(177, 31, 75, 0.12);
+  }
+  html[data-theme="dark"] {
+    color-scheme: dark;
+    --cp-bg: #3d3b3a;
+    --cp-bg-elevated: #343231;
+    --cp-surface: #292929;
+    --cp-surface-soft: #2e2e2e;
+    --cp-border: #474747;
+    --cp-border-strong: #5f5f5f;
+    --cp-text: #dedede;
+    --cp-text-muted: #919191;
+    --cp-text-soft: #b0b0b0;
+    --cp-accent: #fd8ea1;
+    --cp-accent-hover: #fb7b91;
+    --cp-accent-soft: rgba(253, 142, 161, 0.14);
+    --cp-accent-fg: #1a1a1a;
+    --cp-success: #4ade80;
+    --cp-danger: #f87171;
+    --cp-warning: #fbbf24;
+    --cp-link: #4da6ff;
+    --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+    --cp-overlay: rgba(41, 41, 41, 0.88);
+    --cp-panel: rgba(41, 41, 41, 0.72);
+    --cp-panel-strong: rgba(41, 41, 41, 0.96);
+    --cp-sheen: rgba(255, 255, 255, 0.04);
+    --cp-highlight: rgba(253, 142, 161, 0.12);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--cp-bg);
+    color: var(--cp-text);
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(900px circle at 10% -10%, var(--cp-accent-soft), transparent 50%),
+      radial-gradient(900px circle at 105% 5%, rgba(124,58,237,0.06), transparent 55%);
+    background-attachment: fixed;
+  }
+  html[data-theme="dark"] body {
+    background-image:
+      radial-gradient(1100px circle at 10% -10%, rgba(253,142,161,0.10), transparent 55%),
+      radial-gradient(1100px circle at 110% 0%, rgba(124,58,237,0.10), transparent 55%);
+  }
+
+  /* ========== Theme color tokens — one accent per pillar ========== */
+  :root {
+    --t-defend:   #b11f4b;
+    --t-defend-s: rgba(177,31,75,0.10);
+    --t-enable:   #0078d4;
+    --t-enable-s: rgba(0,120,212,0.10);
+    --t-trust:    #16a34a;
+    --t-trust-s:  rgba(22,163,74,0.10);
+    --t-ready:    #d97706;
+    --t-ready-s:  rgba(217,119,6,0.13);
+    --t-industry: #7c3aed;
+    --t-industry-s: rgba(124,58,237,0.10);
+    --t-convo:    #0d9488;
+    --t-convo-s:  rgba(13,148,136,0.10);
+  }
+  html[data-theme="dark"] {
+    --t-defend:   #fd8ea1;
+    --t-defend-s: rgba(253,142,161,0.14);
+    --t-enable:   #4da6ff;
+    --t-enable-s: rgba(77,166,255,0.14);
+    --t-trust:    #4ade80;
+    --t-trust-s:  rgba(74,222,128,0.13);
+    --t-ready:    #fbbf24;
+    --t-ready-s:  rgba(251,191,36,0.16);
+    --t-industry: #a78bfa;
+    --t-industry-s: rgba(167,139,250,0.14);
+    --t-convo:    #5eead4;
+    --t-convo-s:  rgba(94,234,212,0.13);
+  }
+
+  /* ========== Header ========== */
+  header.top {
+    background: var(--cp-bg-elevated);
+    border-bottom: 1px solid var(--cp-border);
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    backdrop-filter: saturate(140%) blur(8px);
+    background-color: var(--cp-panel-strong);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-dot {
+    width: 32px; height: 32px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--cp-accent), #7c3aed);
+    display: grid; place-items: center;
+    color: white; font-weight: 700; font-size: 15px;
+    box-shadow: 0 4px 12px rgba(177,31,75,0.32);
+  }
+  .brand-text { font-weight: 600; font-size: 15px; }
+  .brand-sub { color: var(--cp-text-muted); font-size: 12px; }
+  .top-right { display: flex; align-items: center; gap: 14px; font-size: 13px; color: var(--cp-text-muted); }
+  .theme-toggle {
+    background: var(--cp-surface-soft);
+    border: 1px solid var(--cp-border);
+    color: var(--cp-text-muted);
+    width: 34px; height: 34px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: inherit;
+    display: grid; place-items: center;
+  }
+  .theme-toggle:hover { border-color: var(--cp-accent); color: var(--cp-accent); }
+  .prototype-pill {
+    background: linear-gradient(135deg, var(--cp-accent), #7c3aed);
+    color: white;
+    border: none;
+    border-radius: 999px;
+    padding: 4px 11px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 8px rgba(177,31,75,0.22);
+  }
+  .persona-toggle {
+    display: inline-flex;
+    background: var(--cp-surface-soft);
+    border: 1px solid var(--cp-border);
+    border-radius: 999px;
+    padding: 3px;
+  }
+  .persona-toggle button {
+    background: transparent;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--cp-text-muted);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .persona-toggle button.active {
+    background: var(--cp-surface);
+    color: var(--cp-text);
+    box-shadow: 0 0 2px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.16);
+  }
+
+  /* ========== Hero ========== */
+  .hero {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 56px 28px 28px;
+    text-align: center;
+    position: relative;
+  }
+  .hero h1 {
+    font-size: 40px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--cp-text), var(--cp-accent) 80%, #7c3aed);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  html[data-theme="dark"] .hero h1 {
+    background: linear-gradient(135deg, var(--cp-text), var(--cp-accent) 75%, #a78bfa);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero p.subtitle {
+    font-size: 15.5px;
+    color: var(--cp-text-muted);
+    margin: 0 auto 30px;
+    max-width: 680px;
+    line-height: 1.55;
+  }
+  .search-wrap {
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border);
+    border-radius: 20px;
+    padding: 18px 20px;
+    max-width: 780px;
+    margin: 0 auto;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.04);
+    transition: border-color 0.18s, box-shadow 0.18s, transform 0.18s;
+  }
+  html[data-theme="dark"] .search-wrap {
+    box-shadow: 0 12px 40px rgba(0,0,0,0.32), 0 2px 6px rgba(0,0,0,0.18);
+  }
+  .search-wrap:focus-within {
+    border-color: var(--cp-accent);
+    box-shadow: 0 0 0 4px var(--cp-accent-soft), 0 14px 44px rgba(177,31,75,0.10);
+    transform: translateY(-1px);
+  }
+  .search-row { display: flex; align-items: center; gap: 12px; }
+  .search-icon { color: var(--cp-text-soft); flex-shrink: 0; font-size: 18px; }
+  .search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--cp-text);
+    font-size: 16px;
+    font-family: inherit;
+    padding: 8px 4px;
+  }
+  .search-input::placeholder { color: var(--cp-text-soft); }
+  .send-btn {
+    background: linear-gradient(135deg, var(--cp-accent), var(--cp-accent-hover));
+    color: var(--cp-accent-fg);
+    border: none;
+    border-radius: 12px;
+    padding: 11px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 4px 14px rgba(177,31,75,0.32);
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+  .send-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(177,31,75,0.40); }
+  .send-btn:active { transform: translateY(0); }
+  .search-meta {
+    margin-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--cp-text-soft);
+  }
+
+  /* ========== Suggested prompts ========== */
+  .suggested {
+    max-width: 760px;
+    margin: 18px auto 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  .suggested-chip {
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border);
+    border-radius: 999px;
+    padding: 7px 14px;
+    font-size: 12px;
+    color: var(--cp-text-muted);
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .suggested-chip:hover {
+    border-color: var(--cp-accent);
+    color: var(--cp-text);
+  }
+
+  /* ========== Quick-link theme chips ========== */
+  .quicklinks {
+    max-width: 1180px;
+    margin: 36px auto 0;
+    padding: 0 28px;
+  }
+  .quicklinks-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--cp-text-soft);
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .quicklinks-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .theme-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border);
+    border-radius: 14px;
+    padding: 11px 16px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--cp-text);
+    font-weight: 600;
+    transition: all 0.15s;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .theme-chip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+  }
+  html[data-theme="dark"] .theme-chip:hover {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.32);
+  }
+  .theme-chip .icon {
+    width: 22px; height: 22px;
+    border-radius: 7px;
+    display: grid; place-items: center;
+    font-size: 12px;
+    color: white;
+  }
+  .chip-defend   .icon { background: var(--t-defend); }
+  .chip-enable   .icon { background: var(--t-enable); }
+  .chip-trust    .icon { background: var(--t-trust); }
+  .chip-ready    .icon { background: var(--t-ready); }
+  .chip-industry .icon { background: var(--t-industry); }
+  .chip-convo    .icon { background: var(--t-convo); }
+  .chip-defend:hover   { border-color: var(--t-defend);   background: var(--t-defend-s); }
+  .chip-enable:hover   { border-color: var(--t-enable);   background: var(--t-enable-s); }
+  .chip-trust:hover    { border-color: var(--t-trust);    background: var(--t-trust-s); }
+  .chip-ready:hover    { border-color: var(--t-ready);    background: var(--t-ready-s); }
+  .chip-industry:hover { border-color: var(--t-industry); background: var(--t-industry-s); }
+  .chip-convo:hover    { border-color: var(--t-convo);    background: var(--t-convo-s); }
+
+  /* ========== Filter bar ========== */
+  .filter-bar {
+    max-width: 1180px;
+    margin: 28px auto 0;
+    padding: 14px 20px;
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    flex-wrap: wrap;
+    background: var(--cp-bg-elevated);
+    border: 1px solid var(--cp-border);
+    border-radius: 12px;
+  }
+  .filter-group { display: flex; align-items: center; gap: 8px; }
+  .filter-group label {
+    font-size: 12px;
+    color: var(--cp-text-muted);
+    font-weight: 500;
+  }
+  .filter-group select {
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border);
+    color: var(--cp-text);
+    border-radius: 8px;
+    padding: 5px 9px;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .stage-pills { display: inline-flex; gap: 4px; }
+  .stage-pill {
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border);
+    border-radius: 999px;
+    padding: 5px 11px;
+    font-size: 11px;
+    color: var(--cp-text-muted);
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 500;
+  }
+  .stage-pill.active {
+    background: var(--cp-text);
+    color: var(--cp-bg);
+    border-color: var(--cp-text);
+  }
+
+  /* ========== Main panels (results) ========== */
+  .results-wrap {
+    max-width: 1180px;
+    margin: 28px auto 100px;
+    padding: 0 28px;
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+    gap: 24px;
+    animation: fadeUp 0.32s ease;
+  }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @media (max-width: 900px) {
+    .results-wrap { grid-template-columns: 1fr; }
+  }
+  .panel {
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border);
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+  }
+  html[data-theme="dark"] .panel { box-shadow: 0 1px 3px rgba(0,0,0,0.32), 0 8px 24px rgba(0,0,0,0.18); }
+  .panel h2 {
+    font-size: 16px;
+    margin: 0 0 4px;
+    font-weight: 600;
+  }
+  .panel .subhead {
+    font-size: 12.5px;
+    color: var(--cp-text-muted);
+    margin: 0 0 18px;
+  }
+
+  /* AI summary block */
+  .ai-summary {
+    background: linear-gradient(135deg, var(--cp-accent-soft), rgba(124,58,237,0.06));
+    border-left: 3px solid var(--cp-accent);
+    border-radius: 12px;
+    padding: 16px 18px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    margin-bottom: 22px;
+    color: var(--cp-text);
+  }
+  .ai-summary .ai-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--cp-accent);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  /* Asset cards */
+  .asset-list { display: flex; flex-direction: column; gap: 14px; }
+  .asset-card {
+    border: 1px solid var(--cp-border);
+    border-left: 3px solid var(--cp-accent);
+    border-radius: 14px;
+    padding: 16px 18px;
+    background: var(--cp-bg-elevated);
+    transition: all 0.18s;
+    cursor: pointer;
+    position: relative;
+  }
+  .asset-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+    border-color: var(--cp-border-strong);
+  }
+  html[data-theme="dark"] .asset-card:hover { box-shadow: 0 12px 32px rgba(0,0,0,0.36); }
+  .asset-card.t-defend   { border-left-color: var(--t-defend); }
+  .asset-card.t-enable   { border-left-color: var(--t-enable); }
+  .asset-card.t-trust    { border-left-color: var(--t-trust); }
+  .asset-card.t-ready    { border-left-color: var(--t-ready); }
+  .asset-card.t-industry { border-left-color: var(--t-industry); }
+  .asset-card.t-convo    { border-left-color: var(--t-convo); }
+  .asset-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .asset-title {
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 1.35;
+    color: var(--cp-text);
+  }
+  .asset-rank {
+    background: var(--cp-surface-soft);
+    color: var(--cp-text-soft);
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    flex-shrink: 0;
+  }
+  .asset-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .meta-badge {
+    font-size: 10.5px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--cp-surface-soft);
+    color: var(--cp-text-muted);
+    font-weight: 500;
+    border: 1px solid var(--cp-border);
+  }
+  .meta-badge.t-defend   { background: var(--t-defend-s);   color: var(--t-defend);   border-color: transparent; font-weight: 600; }
+  .meta-badge.t-enable   { background: var(--t-enable-s);   color: var(--t-enable);   border-color: transparent; font-weight: 600; }
+  .meta-badge.t-trust    { background: var(--t-trust-s);    color: var(--t-trust);    border-color: transparent; font-weight: 600; }
+  .meta-badge.t-ready    { background: var(--t-ready-s);    color: var(--t-ready);    border-color: transparent; font-weight: 600; }
+  .meta-badge.t-industry { background: var(--t-industry-s); color: var(--t-industry); border-color: transparent; font-weight: 600; }
+  .meta-badge.t-convo    { background: var(--t-convo-s);    color: var(--t-convo);    border-color: transparent; font-weight: 600; }
+  .meta-badge.type { background: var(--cp-text); color: var(--cp-bg); border-color: transparent; font-weight: 600; }
+  html[data-theme="dark"] .meta-badge.type { background: var(--cp-text); color: var(--cp-bg-elevated); }
+  .asset-desc { font-size: 13px; color: var(--cp-text-muted); margin: 6px 0 10px; line-height: 1.55; }
+  .asset-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .action-btn {
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border);
+    border-radius: 9px;
+    padding: 7px 12px;
+    font-size: 12px;
+    color: var(--cp-text);
+    font-family: inherit;
+    cursor: pointer;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.12s;
+  }
+  .action-btn:hover { border-color: var(--cp-accent); color: var(--cp-accent); transform: translateY(-1px); }
+  .action-btn.primary {
+    background: linear-gradient(135deg, var(--cp-accent), var(--cp-accent-hover));
+    color: var(--cp-accent-fg);
+    border-color: transparent;
+    box-shadow: 0 2px 8px rgba(177,31,75,0.24);
+  }
+  .action-btn.primary:hover { box-shadow: 0 4px 12px rgba(177,31,75,0.36); color: var(--cp-accent-fg); }
+
+  .citation-ref {
+    display: inline-block;
+    min-width: 18px;
+    height: 18px;
+    line-height: 18px;
+    padding: 0 5px;
+    border-radius: 4px;
+    background: var(--cp-accent);
+    color: var(--cp-accent-fg);
+    font-size: 10px;
+    font-weight: 700;
+    text-align: center;
+    vertical-align: super;
+    margin: 0 1px;
+  }
+
+  /* Right column sub-panels */
+  .right-col { display: flex; flex-direction: column; gap: 24px; }
+  .mini-list { display: flex; flex-direction: column; gap: 8px; }
+  .next-convo {
+    background: var(--cp-bg-elevated);
+    border: 1px solid var(--cp-border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .next-convo:hover { border-color: var(--cp-accent); }
+  .next-convo .nc-title {
+    font-size: 13.5px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .next-convo .nc-meta { font-size: 11.5px; color: var(--cp-text-muted); }
+
+  .upsell-card {
+    background: var(--cp-bg-elevated);
+    border: 1px solid var(--cp-border);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .upsell-card .uc-sku { font-weight: 600; font-size: 13.5px; }
+  .upsell-card .uc-reason { font-size: 12px; color: var(--cp-text-muted); margin-top: 4px; line-height: 1.45; }
+  .uc-tag {
+    display: inline-block;
+    font-size: 10.5px;
+    background: var(--cp-success);
+    color: white;
+    padding: 1px 7px;
+    border-radius: 999px;
+    margin-top: 6px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+
+  /* Trending strip */
+  .trending {
+    max-width: 1180px;
+    margin: 18px auto 0;
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--cp-text-muted);
+    flex-wrap: wrap;
+  }
+  .trending strong { color: var(--cp-text); font-weight: 600; }
+  .trending-item {
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border);
+    border-radius: 999px;
+    padding: 4px 10px;
+    cursor: pointer;
+  }
+  .trending-item:hover { border-color: var(--cp-accent); color: var(--cp-accent); }
+
+  /* My Toolkit drawer */
+  .toolkit-drawer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--cp-bg-elevated);
+    border-top: 1px solid var(--cp-border);
+    box-shadow: 0 -8px 32px rgba(0,0,0,0.08);
+    padding: 14px 28px;
+    z-index: 20;
+    transform: translateY(calc(100% - 50px));
+    transition: transform 0.25s ease;
+  }
+  .toolkit-drawer.open { transform: translateY(0); }
+  .toolkit-handle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    height: 26px;
+  }
+  .toolkit-handle-left {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .toolkit-count {
+    background: var(--cp-accent);
+    color: var(--cp-accent-fg);
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 2px 9px;
+  }
+  .toolkit-items {
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+  }
+  .toolkit-item {
+    flex: 0 0 240px;
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .toolkit-item .ti-title { font-weight: 600; color: var(--cp-text); font-size: 12.5px; line-height: 1.35; }
+  .toolkit-item .ti-meta { color: var(--cp-text-muted); font-size: 11px; }
+  .toolkit-actions { display: flex; gap: 6px; margin-top: 6px; }
+  .ti-btn {
+    background: transparent;
+    border: 1px solid var(--cp-border);
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: 11px;
+    color: var(--cp-text-muted);
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .ti-btn.primary { background: var(--cp-accent); border-color: var(--cp-accent); color: var(--cp-accent-fg); font-weight: 600; }
+
+  /* Empty state */
+  .empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--cp-text-muted);
+    font-size: 14px;
+  }
+
+  /* Loading */
+  .loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 30px;
+    justify-content: center;
+    color: var(--cp-text-muted);
+    font-size: 13px;
+  }
+  .loading-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--cp-accent);
+    animation: pulse 1.4s infinite ease-in-out;
+  }
+  .loading-dot:nth-child(2) { animation-delay: 0.16s; }
+  .loading-dot:nth-child(3) { animation-delay: 0.32s; }
+  @keyframes pulse { 0%, 80%, 100% { opacity: 0.2; } 40% { opacity: 1; } }
+
+  /* Modal */
+  .modal-bg {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    padding: 20px;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: var(--cp-surface);
+    border-radius: 14px;
+    max-width: 580px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 24px 26px;
+    box-shadow: var(--cp-shadow);
+  }
+  .modal h3 { margin: 0 0 8px; font-size: 17px; font-weight: 600; }
+  .modal .modal-sub { color: var(--cp-text-muted); font-size: 12.5px; margin-bottom: 16px; }
+  .modal pre {
+    background: var(--cp-surface-soft);
+    border: 1px solid var(--cp-border);
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 12.5px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: var(--cp-text);
+    font-family: "Segoe UI", Aptos, Calibri, sans-serif;
+    margin: 0;
+  }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+
+  /* ========== Asset sheet (right-side drawer) ========== */
+  .sheet-bg {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 60;
+  }
+  .sheet-bg.open { opacity: 1; pointer-events: auto; }
+  .sheet {
+    position: fixed;
+    top: 0; right: 0; bottom: 0;
+    width: 760px;
+    max-width: 100vw;
+    background: var(--cp-bg);
+    box-shadow: -20px 0 60px rgba(0,0,0,0.18);
+    transform: translateX(100%);
+    transition: transform 0.28s ease;
+    z-index: 61;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .sheet.open { transform: translateX(0); }
+  .sheet-head {
+    position: sticky;
+    top: 0;
+    background: var(--cp-bg-elevated);
+    border-bottom: 1px solid var(--cp-border);
+    padding: 18px 26px 16px;
+    z-index: 2;
+  }
+  .sheet-head-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .sheet-eyebrow {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--cp-accent);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .sheet-title { font-size: 20px; font-weight: 600; line-height: 1.3; margin: 0; }
+  .sheet-close {
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border);
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--cp-text-muted);
+    font-size: 16px;
+    font-family: inherit;
+    flex-shrink: 0;
+  }
+  .sheet-close:hover { color: var(--cp-text); border-color: var(--cp-border-strong); }
+  .sheet-meta { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .sheet-body { padding: 22px 26px 40px; }
+  .sheet-section { margin-bottom: 26px; }
+  .sheet-section h4 {
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--cp-text-soft);
+    font-weight: 700;
+    margin: 0 0 10px;
+  }
+  .sheet-section p { margin: 0 0 10px; font-size: 14px; line-height: 1.6; color: var(--cp-text); }
+  .sheet-section ul, .sheet-section ol { margin: 0; padding-left: 22px; }
+  .sheet-section li { font-size: 13.5px; line-height: 1.55; margin-bottom: 5px; color: var(--cp-text); }
+  .sheet-cta {
+    display: flex;
+    gap: 8px;
+    padding-top: 14px;
+    border-top: 1px solid var(--cp-border);
+    margin-top: 12px;
+  }
+
+  /* Asset preview blocks */
+  .preview-slides {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .slide-card {
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .slide-num {
+    font-size: 10px;
+    color: var(--cp-text-soft);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .slide-title { font-size: 13px; font-weight: 600; line-height: 1.3; }
+  .slide-body { font-size: 11.5px; color: var(--cp-text-muted); line-height: 1.5; }
+
+  .timeline-row {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--cp-border);
+  }
+  .timeline-row:last-child { border-bottom: none; }
+  .timeline-time {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 12px;
+    color: var(--cp-accent);
+    font-weight: 600;
+    padding-top: 1px;
+  }
+  .timeline-body { font-size: 13px; line-height: 1.5; color: var(--cp-text); }
+  .timeline-body strong { color: var(--cp-text); }
+
+  .code-block {
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 12px;
+    line-height: 1.55;
+    overflow-x: auto;
+    color: var(--cp-text);
+    white-space: pre;
+  }
+
+  .objection-row {
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+  }
+  .obj-q { font-size: 13px; font-weight: 600; color: var(--cp-text); margin-bottom: 4px; }
+  .obj-q::before { content: "❝ "; color: var(--cp-danger); font-weight: 700; }
+  .obj-a { font-size: 12.5px; color: var(--cp-text-muted); line-height: 1.5; }
+  .obj-a::before { content: "→ "; color: var(--cp-success); font-weight: 700; }
+
+  .pricing-tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+  }
+  .pricing-tbl th, .pricing-tbl td {
+    border: 1px solid var(--cp-border);
+    padding: 8px 10px;
+    text-align: left;
+  }
+  .pricing-tbl th {
+    background: var(--cp-surface-soft);
+    font-weight: 600;
+    color: var(--cp-text);
+  }
+  .pricing-tbl td { color: var(--cp-text-muted); }
+  .pricing-tbl td:first-child { color: var(--cp-text); font-weight: 500; }
+
+  .phase-card {
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border);
+    border-left: 3px solid var(--cp-accent);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+  }
+  .phase-head { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .phase-head .phase-time {
+    background: var(--cp-accent-soft);
+    color: var(--cp-accent);
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-left: 8px;
+  }
+  .phase-body { font-size: 12.5px; color: var(--cp-text-muted); line-height: 1.5; }
+
+  .video-thumb {
+    background: linear-gradient(135deg, var(--cp-accent), var(--cp-accent-hover));
+    border-radius: 12px;
+    aspect-ratio: 16/9;
+    display: grid; place-items: center;
+    color: white;
+    font-size: 48px;
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+  .chapter-list { font-size: 12.5px; }
+  .chapter-list div {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--cp-border);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .chapter-list div:last-child { border-bottom: none; }
+  .chapter-list .ch-time { font-family: Consolas, monospace; color: var(--cp-accent); font-weight: 600; min-width: 40px; }
+
+  .question-card {
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  .question-card .q-num {
+    display: inline-block;
+    background: var(--cp-accent);
+    color: var(--cp-accent-fg);
+    border-radius: 50%;
+    width: 22px; height: 22px;
+    text-align: center;
+    line-height: 22px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-right: 8px;
+  }
+
+  /* Scenario brief banner */
+  .scenario-brief {
+    background: var(--cp-bg-elevated);
+    border: 1px solid var(--cp-border);
+    border-left: 3px solid var(--cp-accent);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 20px;
+  }
+  .scenario-brief .sb-eyebrow {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--cp-accent);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .scenario-brief .sb-frame { font-size: 13.5px; line-height: 1.55; color: var(--cp-text); margin-bottom: 12px; }
+  .scenario-brief .sb-row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 10px;
+    font-size: 12.5px;
+    padding: 6px 0;
+    border-top: 1px dashed var(--cp-border);
+  }
+  .scenario-brief .sb-row:nth-of-type(1) { border-top: none; padding-top: 8px; }
+  .scenario-brief .sb-label { color: var(--cp-text-soft); font-weight: 600; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.5px; padding-top: 1px; }
+  .scenario-brief .sb-val { color: var(--cp-text-muted); line-height: 1.55; }
+  .scenario-brief .sb-val strong { color: var(--cp-text); }
+
+  /* Footer */
+  footer.bottom {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 16px 28px 80px;
+    color: var(--cp-text-soft);
+    font-size: 11px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <div class="brand-dot">S</div>
+    <div>
+      <div class="brand-text">Security Resource Page</div>
+      <div class="brand-sub">AI-powered partner toolkit · Microsoft Security CxE</div>
+    </div>
+  </div>
+  <div class="top-right">
+    <span class="prototype-pill">Prototype</span>
+    <button class="theme-toggle" id="themeToggle" title="Toggle dark / light" aria-label="Toggle theme">◐</button>
+    <div class="persona-toggle" role="tablist" aria-label="Persona">
+      <button class="active" data-persona="presales">Pre-sales technical</button>
+      <button data-persona="delivery">Delivery specialist</button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>What customer problem are you solving today?</h1>
+  <p class="subtitle">Describe a use case or paste a customer question. We'll surface the right partner assets, suggest your next conversation, and recommend the natural upsell — all from the assets your team already trusts.</p>
+
+  <div class="search-wrap" role="search">
+    <div class="search-row">
+      <span class="search-icon">🔍</span>
+      <input id="searchInput" class="search-input" type="text"
+             placeholder="e.g. My customer is worried about shadow SaaS sprawl after rolling out Copilot…"
+             aria-label="Describe a customer problem or use case" />
+      <button class="send-btn" id="sendBtn">Find assets →</button>
+    </div>
+    <div class="search-meta">
+      <span>Tip: be specific — industry, seat size, and existing SKUs help recommendations</span>
+      <span id="charCount">0 / 2000</span>
+    </div>
+  </div>
+
+  <div class="suggested" id="suggestedPrompts"></div>
+</section>
+
+<div class="trending" id="trending">
+  <strong>Trending this week</strong>
+  <span class="trending-item" data-q="Help me show a customer how to spot shadow SaaS in 10 minutes">Shadow SaaS in 10 min</span>
+  <span class="trending-item" data-q="Build a Copilot for Security pilot plan for a 1,500-seat manufacturing customer">Copilot for Security pilot plan</span>
+  <span class="trending-item" data-q="Hospital wants a HIPAA-aligned Purview deployment story">HIPAA + Purview</span>
+  <span class="trending-item" data-q="Customer renewing M365 E3 — make the case to upgrade to E5 Security">E3 → E5 Security upgrade</span>
+</div>
+
+<div class="quicklinks">
+  <div class="quicklinks-label">Browse by theme</div>
+  <div class="quicklinks-row" id="themeRow">
+    <button class="theme-chip chip-defend"   data-theme="Defend with AI"><span class="icon">⚔</span>Defend with AI</button>
+    <button class="theme-chip chip-enable"   data-theme="Safely enable AI"><span class="icon">⚡</span>Safely enable AI</button>
+    <button class="theme-chip chip-trust"    data-theme="Trust AI with your Data"><span class="icon">🔒</span>Trust AI with your Data</button>
+    <button class="theme-chip chip-ready"    data-theme="Get Ready for AI"><span class="icon">★</span>Get Ready for AI</button>
+    <button class="theme-chip chip-industry" data-theme="Industry"><span class="icon">⌘</span>By Industry</button>
+    <button class="theme-chip chip-convo"    data-theme="Customer conversation"><span class="icon">💬</span>Customer conversation</button>
+  </div>
+</div>
+
+<div class="filter-bar" id="filterBar">
+  <div class="filter-group">
+    <label>Stage</label>
+    <div class="stage-pills" id="stagePills">
+      <button class="stage-pill active" data-stage="all">All</button>
+      <button class="stage-pill" data-stage="Position">1 · Position</button>
+      <button class="stage-pill" data-stage="Decide">2 · Decide</button>
+      <button class="stage-pill" data-stage="Sell">3 · Sell</button>
+      <button class="stage-pill" data-stage="Deploy">4 · Deploy</button>
+      <button class="stage-pill" data-stage="Enable">5 · Enable</button>
+    </div>
+  </div>
+  <div class="filter-group">
+    <label>Industry</label>
+    <select id="industrySel">
+      <option value="">Any</option>
+      <option>Healthcare</option>
+      <option>Financial Services</option>
+      <option>Manufacturing</option>
+      <option>Retail</option>
+      <option>Public Sector</option>
+      <option>Professional Services</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label>Customer size</label>
+    <select id="sizeSel">
+      <option value="">Any</option>
+      <option>Up to 300 seats</option>
+      <option>300–2,500 seats</option>
+      <option>2,500+ seats</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label>Existing SKU</label>
+    <select id="skuSel">
+      <option value="">Any</option>
+      <option>M365 Business Premium</option>
+      <option>M365 E3</option>
+      <option>M365 E5 Security</option>
+      <option>M365 E5</option>
+    </select>
+  </div>
+</div>
+
+<main class="results-wrap" id="results">
+  <div class="empty">
+    Pick a theme above, type a problem, or click a trending question to see how the page responds.
+  </div>
+</main>
+
+<footer class="bottom">
+  Prototype · Concept extension of slide 5 in <em>Storyboard on AI-Powered Partner-Ready Assets</em> · For Pauline Lee review
+</footer>
+
+<!-- My Toolkit drawer -->
+<div class="toolkit-drawer" id="drawer">
+  <div class="toolkit-handle" id="drawerHandle">
+    <div class="toolkit-handle-left">
+      <span>📁 My Toolkit</span>
+      <span class="toolkit-count" id="toolkitCount">0</span>
+    </div>
+    <span id="drawerHint" style="font-size:11px;color:var(--cp-text-soft);">Click results' "Add to toolkit" to collect assets · click here to expand</span>
+  </div>
+  <div class="toolkit-items" id="toolkitItems"></div>
+</div>
+
+<!-- Asset sheet -->
+<div class="sheet-bg" id="sheetBg"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="sheet-head">
+    <div class="sheet-head-row">
+      <div>
+        <div class="sheet-eyebrow" id="sheetEyebrow"></div>
+        <h3 class="sheet-title" id="sheetTitle"></h3>
+      </div>
+      <button class="sheet-close" id="sheetClose" aria-label="Close">✕</button>
+    </div>
+    <div class="sheet-meta" id="sheetMeta"></div>
+  </div>
+  <div class="sheet-body" id="sheetBody"></div>
+</div>
+
+<!-- Modal -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <h3 id="modalTitle">Drafted</h3>
+    <div class="modal-sub" id="modalSub">AI-generated draft · review before sending</div>
+    <pre id="modalBody"></pre>
+    <div class="modal-actions">
+      <button class="action-btn" id="modalCopy">Copy</button>
+      <button class="action-btn primary" id="modalClose">Done</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// =====================================================================
+// Mock asset corpus
+// =====================================================================
+const ASSETS = [
+  { id: "a1", title: "Defender for Cloud Apps — Customer Overview Deck",
+    type: "Deck", theme: "Defend with AI", stages: ["Position","Sell"], persona: ["presales"],
+    industries: ["*"], sizes: ["Small","Mid"],
+    desc: "20-slide editable deck for a 30-min customer overview. Includes shadow SaaS demo screenshots and 3 customer proof points.",
+    titanModule: null },
+  { id: "a2", title: "Shadow SaaS Discovery — 5-min Demo Script",
+    type: "Demo script", theme: "Defend with AI", stages: ["Decide","Sell"], persona: ["presales","delivery"],
+    industries: ["*"], sizes: ["Small","Mid","Enterprise"],
+    desc: "Step-by-step script for showing OAuth consent, app discovery, and risk scoring inside Defender XDR. Tested with 14 partners.",
+    titanModule: "Defend with AI · Module 2" },
+  { id: "a3", title: "Purview DLP for Copilot — Battle Card",
+    type: "Battle card", theme: "Trust AI with your Data", stages: ["Position","Sell"], persona: ["presales"],
+    industries: ["*"], sizes: ["Mid","Enterprise"],
+    desc: "Two-page battle card covering the top objections you'll hear from a CISO when proposing Purview alongside a Copilot rollout.",
+    titanModule: null },
+  { id: "a4", title: "Copilot for Security — Quick Deploy Runbook",
+    type: "Runbook", theme: "Safely enable AI", stages: ["Deploy"], persona: ["delivery"],
+    industries: ["*"], sizes: ["Mid","Enterprise"],
+    desc: "Zero-to-running in under 4 hours per tenant. Includes prereqs check, role assignments, and validation queries.",
+    titanModule: "Safely enable AI · Module 1" },
+  { id: "a5", title: "Conditional Access Hardening — PowerShell Pack",
+    type: "Script", theme: "Defend with AI", stages: ["Deploy"], persona: ["delivery"],
+    industries: ["*"], sizes: ["Small","Mid"],
+    desc: "Auto-deploys the 8 highest-impact Conditional Access policies across multiple tenants. Idempotent, with rollback.",
+    titanModule: null },
+  { id: "a6", title: "Sentinel SOC Modernization — Customer Email Template",
+    type: "Email", theme: "Defend with AI", stages: ["Position"], persona: ["presales"],
+    industries: ["*"], sizes: ["Mid","Enterprise"],
+    desc: "Editable outreach template with three variants by buyer persona (CISO / IT Director / CTO).",
+    titanModule: null },
+  { id: "a7", title: "Intune Mobile Threat Response — Playbook",
+    type: "Playbook", theme: "Defend with AI", stages: ["Deploy","Enable"], persona: ["delivery"],
+    industries: ["*"], sizes: ["Small","Mid","Enterprise"],
+    desc: "End-to-end incident response flow for compromised mobile devices, integrating Intune + Defender for Endpoint.",
+    titanModule: "Defend with AI · Module 4" },
+  { id: "a8", title: "Security Starter Bundle — Pricing One-Pager",
+    type: "Pricing", theme: "Customer conversation", stages: ["Sell"], persona: ["presales"],
+    industries: ["*"], sizes: ["Small"],
+    desc: "Pre-built bundle comparison: Business Premium vs. add-on Defender for Business vs. M365 E5 Security.",
+    titanModule: null },
+  { id: "a9", title: "Customer Discovery Workshop — Facilitation Guide",
+    type: "Guide", theme: "Customer conversation", stages: ["Position","Decide"], persona: ["presales"],
+    industries: ["*"], sizes: ["Mid","Enterprise"],
+    desc: "90-minute workshop kit: agenda, whiteboard templates, and 22 discovery questions mapped to Microsoft Security offerings.",
+    titanModule: null },
+  { id: "a10", title: "Defender XDR — Multi-tenant Deployment Toolkit",
+    type: "Toolkit", theme: "Defend with AI", stages: ["Deploy"], persona: ["delivery"],
+    industries: ["*"], sizes: ["Enterprise"],
+    desc: "Bicep + Graph automation that on-boards Defender XDR across 50+ customer tenants with one config file.",
+    titanModule: null },
+  { id: "a11", title: "Titan Academy · Defend with AI — Module 1 (Video)",
+    type: "Video", theme: "Defend with AI", stages: ["Enable"], persona: ["presales","delivery"],
+    industries: ["*"], sizes: ["Small","Mid","Enterprise"],
+    desc: "4-minute primer for partner sellers on how to position AI-native security. Badge issued on completion.",
+    titanModule: "Defend with AI · Module 1" },
+  { id: "a12", title: "Healthcare — HIPAA + Microsoft Security Crosswalk",
+    type: "Industry guide", theme: "Industry", stages: ["Position","Decide"], persona: ["presales"],
+    industries: ["Healthcare"], sizes: ["Mid","Enterprise"],
+    desc: "Maps every HIPAA Security Rule safeguard to Microsoft Security controls. Used by 30+ partners for hospital deals.",
+    titanModule: null },
+  { id: "a13", title: "Financial Services — DLP & Insider Risk Pattern Library",
+    type: "Industry guide", theme: "Industry", stages: ["Position","Decide","Sell"], persona: ["presales","delivery"],
+    industries: ["Financial Services"], sizes: ["Mid","Enterprise"],
+    desc: "20+ pre-built Purview policies tuned for retail banking and capital markets workflows.",
+    titanModule: null },
+  { id: "a14", title: "Get-Ready Assessment — 15-Question Maturity Quiz",
+    type: "Assessment", theme: "Get Ready for AI", stages: ["Position"], persona: ["presales"],
+    industries: ["*"], sizes: ["Small","Mid","Enterprise"],
+    desc: "Interactive customer-facing quiz that scores AI readiness across data, identity, and endpoint, with a one-page action plan.",
+    titanModule: "Get Ready for AI · Module 1" },
+];
+
+const SUGGESTED_PROMPTS = [
+  "How can I help a customer identify shadow SaaS apps after a Copilot rollout?",
+  "What's the right Purview pitch for a healthcare customer worried about Copilot data leakage?",
+  "Build a 30-day Sentinel pilot plan for a 1,500-seat manufacturer.",
+  "Customer is on M365 E3 — make the upgrade case to E5 Security in 5 bullets.",
+  "Show me a 5-minute demo flow for Conditional Access on mobile devices."
+];
+
+const UPSELL_CATALOG = {
+  "Defend with AI": [
+    { sku: "Microsoft Defender XDR", reason: "Unified detection across endpoint, email, identity, and cloud apps — natural extension when shadow SaaS is the entry point.", motion: "Net-new add-on" },
+    { sku: "Microsoft 365 E5 Security", reason: "Bundles Defender for Endpoint P2 + Defender for Identity + Defender for Cloud Apps + AAD P2 at ~50% less than à la carte.", motion: "Upgrade from E3" },
+    { sku: "Microsoft Sentinel (pay-as-you-go)", reason: "Stream SaaS + identity signals into one SIEM. Most smaller customers land at <$2K/mo with smart ingestion filters.", motion: "Attached" },
+  ],
+  "Safely enable AI": [
+    { sku: "Microsoft Copilot for Security", reason: "Pairs with Defender XDR to give SOC analysts AI-assisted triage. Strong land motion when the customer already trusts your Defender deployment.", motion: "Attached" },
+    { sku: "Microsoft Purview AI Hub", reason: "Discovers, governs, and protects Copilot interactions. Almost always a requirement, not a nice-to-have.", motion: "Attached" },
+  ],
+  "Trust AI with your Data": [
+    { sku: "Microsoft Purview Data Loss Prevention", reason: "Stops sensitive data leaking into Copilot prompts or third-party LLM apps. The #1 CISO requirement for Copilot greenlight.", motion: "Attached" },
+    { sku: "Microsoft Purview Insider Risk Management", reason: "Detects intent-based risky behavior — paired with DLP closes the loop on accidental + malicious exposure.", motion: "Attached" },
+  ],
+  "Get Ready for AI": [
+    { sku: "Microsoft Entra ID P2", reason: "Conditional Access + Identity Protection are table-stakes before Copilot rollout. Often the cleanest first sale.", motion: "Net-new" },
+    { sku: "Microsoft 365 E5 Security", reason: "Bundle of everything below — fastest path to AI-ready posture with one PO.", motion: "Upgrade from E3" },
+  ],
+  "Customer conversation": [
+    { sku: "Microsoft 365 Business Premium", reason: "Right-size landing SKU for smaller-customer conversations. Adds Defender for Business + Intune to E3 features.", motion: "Net-new" },
+    { sku: "Microsoft 365 E5 Security", reason: "For larger customers — the security-only upgrade tier that doesn't force them onto E5 Apps.", motion: "Upgrade from E3" },
+  ],
+  "Industry": [
+    { sku: "Microsoft Defender XDR + Sentinel", reason: "Strongest regulated-industry posture story. Both have prebuilt content packs for HIPAA, PCI, and FFIEC.", motion: "Net-new" },
+    { sku: "Microsoft Purview Compliance Manager", reason: "Pre-built assessment templates for HIPAA, GDPR, NIST CSF. Easy to demo, fast to value.", motion: "Attached" },
+  ],
+};
+
+const NEXT_CONVO_CATALOG = {
+  "Defend with AI": [
+    { title: "Schedule a 30-min Shadow SaaS workshop", meta: "Use Defender for Cloud Apps · Step-by-step in asset #2" },
+    { title: "Send the CISO the SOC Modernization email template", meta: "Variant: \"For CISOs already running a SIEM\"" },
+    { title: "Run the AI Readiness Assessment together", meta: "Builds the case for the upsell · 15 questions" },
+  ],
+  "Safely enable AI": [
+    { title: "Book a Copilot for Security executive briefing", meta: "Available via Partner Center · slot in 2 weeks" },
+    { title: "Walk customer through Purview AI Hub demo", meta: "Pre-built demo tenant available" },
+  ],
+  "Trust AI with your Data": [
+    { title: "Run a 60-min Purview discovery workshop", meta: "Facilitation guide in asset #9" },
+    { title: "Demo: Copilot prompt with DLP blocking sensitive data", meta: "5-min canned demo · live tenant" },
+  ],
+  "Get Ready for AI": [
+    { title: "Run the 15-question AI Readiness Assessment", meta: "Customer-facing quiz · scored output" },
+    { title: "Propose a 2-week Identity hardening sprint", meta: "Conditional Access script pack available" },
+  ],
+  "Customer conversation": [
+    { title: "Send the Starter Bundle one-pager", meta: "With the three-tier pricing comparison" },
+    { title: "Schedule a 30-min discovery call", meta: "Use the 22-question discovery guide" },
+  ],
+  "Industry": [
+    { title: "Walk through the HIPAA crosswalk one-pager", meta: "Cited control-by-control to Microsoft features" },
+    { title: "Propose a 4-week regulated pilot", meta: "Sentinel + Purview content packs included" },
+  ],
+};
+
+// =====================================================================
+// State
+// =====================================================================
+const state = {
+  persona: "presales",
+  stage: "all",
+  industry: "",
+  size: "",
+  sku: "",
+  toolkit: [], // asset ids
+  drawerOpen: false,
+};
+
+// =====================================================================
+// Init
+// =====================================================================
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+
+// suggested prompts
+const sp = $("#suggestedPrompts");
+SUGGESTED_PROMPTS.forEach(p => {
+  const b = document.createElement("button");
+  b.className = "suggested-chip";
+  b.textContent = p;
+  b.onclick = () => { $("#searchInput").value = p; runSearch(p); };
+  sp.appendChild(b);
+});
+
+// theme chips
+$$(".theme-chip").forEach(c => {
+  c.onclick = () => runSearch(`Browse: ${c.dataset.theme}`, { theme: c.dataset.theme });
+});
+
+// trending
+$$(".trending-item").forEach(t => {
+  t.onclick = () => { $("#searchInput").value = t.dataset.q; runSearch(t.dataset.q); };
+});
+
+// persona toggle
+$$(".persona-toggle button").forEach(b => {
+  b.onclick = () => {
+    $$(".persona-toggle button").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    state.persona = b.dataset.persona;
+    if (lastQuery) runSearch(lastQuery.q, lastQuery.opts);
+  };
+});
+
+// stage pills
+$$(".stage-pill").forEach(p => {
+  p.onclick = () => {
+    $$(".stage-pill").forEach(x => x.classList.remove("active"));
+    p.classList.add("active");
+    state.stage = p.dataset.stage;
+    if (lastQuery) runSearch(lastQuery.q, lastQuery.opts);
+  };
+});
+
+// dropdowns
+$("#industrySel").onchange = (e) => { state.industry = e.target.value; if (lastQuery) runSearch(lastQuery.q, lastQuery.opts); };
+$("#sizeSel").onchange = (e) => { state.size = e.target.value; if (lastQuery) runSearch(lastQuery.q, lastQuery.opts); };
+$("#skuSel").onchange = (e) => { state.sku = e.target.value; if (lastQuery) runSearch(lastQuery.q, lastQuery.opts); };
+
+// search input
+$("#searchInput").addEventListener("input", e => {
+  $("#charCount").textContent = `${e.target.value.length} / 2000`;
+});
+$("#searchInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") { e.preventDefault(); runSearch(e.target.value); }
+});
+$("#sendBtn").onclick = () => runSearch($("#searchInput").value);
+
+// drawer
+$("#drawerHandle").onclick = () => {
+  state.drawerOpen = !state.drawerOpen;
+  $("#drawer").classList.toggle("open", state.drawerOpen);
+};
+
+// theme toggle
+function syncThemeIcon() {
+  const t = document.documentElement.getAttribute("data-theme") || "light";
+  $("#themeToggle").textContent = t === "dark" ? "☀" : "☾";
+}
+$("#themeToggle").onclick = () => {
+  const cur = document.documentElement.getAttribute("data-theme") || "light";
+  const next = cur === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  try { localStorage.setItem("cp-theme", next); } catch(e) {}
+  syncThemeIcon();
+};
+try {
+  const saved = localStorage.getItem("cp-theme");
+  if (saved) document.documentElement.setAttribute("data-theme", saved);
+} catch(e) {}
+syncThemeIcon();
+
+// modal
+$("#modalClose").onclick = () => $("#modal").classList.remove("open");
+$("#modalCopy").onclick = () => {
+  navigator.clipboard.writeText($("#modalBody").textContent);
+  $("#modalCopy").textContent = "Copied";
+  setTimeout(() => $("#modalCopy").textContent = "Copy", 1500);
+};
+
+// =====================================================================
+// Search logic — keyword-based mock matching
+// =====================================================================
+let lastQuery = null;
+
+function inferTheme(q) {
+  const lq = q.toLowerCase();
+  if (/(shadow|defender|sentinel|endpoint|xdr|incident|threat)/.test(lq)) return "Defend with AI";
+  if (/(copilot for security|copilot.*deploy|adopt copilot)/.test(lq)) return "Safely enable AI";
+  if (/(purview|dlp|data leak|sensitive data|insider risk|compliance)/.test(lq)) return "Trust AI with your Data";
+  if (/(assess|ready|maturity|where to start)/.test(lq)) return "Get Ready for AI";
+  if (/(hipaa|healthcare|hospital|fsi|finserv|bank|retail|manufacturing|public sector)/.test(lq)) return "Industry";
+  if (/(price|pricing|bundle|quote|deal|upgrade|e3|e5|business premium)/.test(lq)) return "Customer conversation";
+  return "Defend with AI";
+}
+
+function rankAssets(q, theme) {
+  const lq = q.toLowerCase();
+  const persona = state.persona;
+  return ASSETS
+    .map(a => {
+      let score = 0;
+      if (a.theme === theme) score += 5;
+      if (a.persona.includes(persona)) score += 3;
+      else score -= 1;
+      if (state.stage !== "all" && !a.stages.includes(state.stage)) score -= 4;
+      if (state.industry && !a.industries.includes("*") && !a.industries.includes(state.industry)) score -= 6;
+      if (state.size) {
+    const tier = state.size.startsWith("Up to") ? "Small" : state.size.startsWith("300") ? "Mid" : "Enterprise";
+    if (!a.sizes.includes(tier)) score -= 2;
+  }
+      // keyword overlap
+      const hay = (a.title + " " + a.desc + " " + a.type).toLowerCase();
+      lq.split(/\s+/).forEach(w => { if (w.length > 3 && hay.includes(w)) score += 1.5; });
+      return { a, score };
+    })
+    .filter(x => x.score > 0)
+    .sort((x, y) => y.score - x.score)
+    .slice(0, 4)
+    .map(x => x.a);
+}
+
+function aiSummaryFor(q, theme, assets) {
+  const persona = state.persona === "presales" ? "pre-sales conversation" : "deployment";
+  if (assets.length === 0) {
+    return `No close matches in the partner library yet for this ${persona}. Try broadening the stage filter, or rephrase the problem in terms of the business outcome the customer is trying to reach.`;
+  }
+  const intro = `For this ${persona}, the strongest combination from the partner library is:`;
+  const refs = assets.slice(0,3).map((a,i) => `<strong>${a.title}</strong><span class="citation-ref">${i+1}</span>`).join(", ");
+  const close = theme === "Defend with AI"
+    ? " Start with a short discovery, then run the demo to make the risk tangible — most partners close on the upgrade conversation in the same week."
+    : theme === "Trust AI with your Data"
+    ? " Lead with the Purview demo to make data risk visible before talking SKUs — it consistently lifts the close rate."
+    : theme === "Safely enable AI"
+    ? " Sequence matters: prove governance (Purview AI Hub) before pitching Copilot for Security itself."
+    : theme === "Industry"
+    ? " Open with the industry crosswalk so the customer immediately sees their regulator's language reflected back."
+    : " Combine the pricing one-pager with the workshop guide — partners report this is the fastest path from interest to PO.";
+  return `${intro} ${refs}.${close}`;
+}
+
+async function runSearch(q, opts = {}) {
+  q = (q || "").trim();
+  if (!q && !opts.theme) return;
+  lastQuery = { q, opts };
+
+  // show loading
+  const root = $("#results");
+  root.innerHTML = `<div class="empty" style="grid-column: 1 / -1;"><div class="loading">
+    <div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div>
+    Searching the partner asset library…
+  </div></div>`;
+
+  // simulate latency
+  await new Promise(r => setTimeout(r, 650));
+
+  const theme = opts.theme || inferTheme(q);
+  const assets = rankAssets(q || theme, theme);
+  const upsells = UPSELL_CATALOG[theme] || [];
+  const nextConvos = NEXT_CONVO_CATALOG[theme] || [];
+
+  // render
+  root.innerHTML = "";
+
+  // Scenario brief (if this query matches a known suggested / trending prompt)
+  const brief = SCENARIOS[q];
+  if (brief) {
+    const sb = document.createElement("section");
+    sb.className = "scenario-brief";
+    sb.style.gridColumn = "1 / -1";
+    sb.innerHTML = `
+      <div class="sb-eyebrow">✦ Scenario brief · curated for this prompt</div>
+      <div class="sb-frame">${escapeHtml(brief.frame)}</div>
+      <div class="sb-row"><div class="sb-label">The play</div><div class="sb-val">${brief.play}</div></div>
+      <div class="sb-row"><div class="sb-label">Outcome</div><div class="sb-val">${escapeHtml(brief.outcome)}</div></div>
+      <div class="sb-row"><div class="sb-label">Time</div><div class="sb-val">${escapeHtml(brief.time)}</div></div>
+    `;
+    root.appendChild(sb);
+    // Reorder assets to lead with brief.sequence
+    if (brief.sequence) {
+      const ordered = [];
+      brief.sequence.forEach(id => { const a = ASSETS.find(x => x.id === id); if (a) ordered.push(a); });
+      assets.forEach(a => { if (!ordered.includes(a)) ordered.push(a); });
+      assets.splice(0, assets.length, ...ordered.slice(0, 4));
+    }
+  }
+
+  // LEFT panel
+  const left = document.createElement("section");
+  left.className = "panel";
+  left.innerHTML = `
+    <h2>Recommended partner assets</h2>
+    <p class="subhead">Ranked for the <strong>${state.persona === "presales" ? "Pre-sales technical" : "Delivery specialist"}</strong> persona${state.stage !== "all" ? ` · ${state.stage} stage` : ""}${state.industry ? ` · ${state.industry}` : ""}</p>
+    <div class="ai-summary">
+      <div class="ai-icon">✦ AI summary</div>
+      <div>${aiSummaryFor(q, theme, assets)}</div>
+    </div>
+    <div class="asset-list" id="assetList"></div>
+  `;
+  root.appendChild(left);
+
+  const list = left.querySelector("#assetList");
+  if (assets.length === 0) {
+    list.innerHTML = `<div class="empty" style="padding:24px;">No assets match those filters. Try clearing the industry or stage filter.</div>`;
+  } else {
+    assets.forEach((a, i) => list.appendChild(renderAsset(a, i+1)));
+  }
+
+  // RIGHT column
+  const right = document.createElement("aside");
+  right.className = "right-col";
+
+  // Next conversations
+  const nc = document.createElement("section");
+  nc.className = "panel";
+  nc.innerHTML = `<h2>Recommended next customer conversations</h2>
+    <p class="subhead">Sequenced actions that close the loop on this use case</p>
+    <div class="mini-list" id="ncList"></div>`;
+  const ncList = nc.querySelector("#ncList");
+  nextConvos.forEach(n => {
+    const d = document.createElement("div");
+    d.className = "next-convo";
+    d.innerHTML = `<div class="nc-title">→ ${escapeHtml(n.title)}</div>
+                   <div class="nc-meta">${escapeHtml(n.meta)}</div>`;
+    ncList.appendChild(d);
+  });
+  right.appendChild(nc);
+
+  // Upsell
+  const us = document.createElement("section");
+  us.className = "panel";
+  us.innerHTML = `<h2>Recommended upsell</h2>
+    <p class="subhead">Natural attach SKUs from this customer's likely position</p>
+    <div class="mini-list" id="usList"></div>`;
+  const usList = us.querySelector("#usList");
+  upsells.forEach(u => {
+    const d = document.createElement("div");
+    d.className = "upsell-card";
+    d.innerHTML = `<div class="uc-sku">${escapeHtml(u.sku)}</div>
+                   <div class="uc-reason">${escapeHtml(u.reason)}</div>
+                   <span class="uc-tag">${escapeHtml(u.motion)}</span>`;
+    usList.appendChild(d);
+  });
+  right.appendChild(us);
+
+  root.appendChild(right);
+}
+
+function renderAsset(a, idx) {
+  const inToolkit = state.toolkit.includes(a.id);
+  const themeClass = themeToClass(a.theme);
+  const el = document.createElement("div");
+  el.className = `asset-card ${themeClass}`;
+  el.innerHTML = `
+    <div class="asset-head">
+      <div class="asset-title">${escapeHtml(a.title)}</div>
+      <span class="asset-rank">#${idx}</span>
+    </div>
+    <div class="asset-meta-row">
+      <span class="meta-badge type">${escapeHtml(a.type)}</span>
+      <span class="meta-badge ${themeClass}">${escapeHtml(a.theme)}</span>
+      ${a.stages.map(s => `<span class="meta-badge">${s}</span>`).join("")}
+      ${a.titanModule ? `<span class="meta-badge">🎓 ${escapeHtml(a.titanModule)}</span>` : ""}
+    </div>
+    <div class="asset-desc">${escapeHtml(a.desc)}</div>
+    <div class="asset-actions">
+      <button class="action-btn primary" data-action="open" data-id="${a.id}">Preview asset</button>
+      <button class="action-btn" data-action="email" data-id="${a.id}">✉ Draft customer email</button>
+      <button class="action-btn" data-action="demo" data-id="${a.id}">▶ Build 5-min demo flow</button>
+      <button class="action-btn" data-action="toolkit" data-id="${a.id}">${inToolkit ? "✓ In toolkit" : "+ Add to toolkit"}</button>
+    </div>
+  `;
+  el.querySelectorAll("[data-action]").forEach(b => {
+    b.onclick = (e) => { e.stopPropagation(); assetAction(b.dataset.action, a.id); };
+  });
+  // Whole card is clickable to open preview (except buttons)
+  el.addEventListener("click", () => openAssetSheet(a));
+  return el;
+}
+
+function themeToClass(theme) {
+  switch (theme) {
+    case "Defend with AI":           return "t-defend";
+    case "Safely enable AI":         return "t-enable";
+    case "Trust AI with your Data":  return "t-trust";
+    case "Get Ready for AI":         return "t-ready";
+    case "Industry":                 return "t-industry";
+    case "Customer conversation":    return "t-convo";
+    default: return "";
+  }
+}
+
+function assetAction(action, id) {
+  const a = ASSETS.find(x => x.id === id);
+  if (!a) return;
+  if (action === "open") {
+    openAssetSheet(a);
+  } else if (action === "email") {
+    openModal(`Draft customer email — ${a.title}`, "AI-generated · review before sending", draftEmail(a));
+  } else if (action === "demo") {
+    openModal(`5-min demo flow — ${a.title}`, "AI-generated · adapt to your tenant", buildDemoFlow(a));
+  } else if (action === "toolkit") {
+    if (!state.toolkit.includes(id)) state.toolkit.push(id);
+    else state.toolkit = state.toolkit.filter(x => x !== id);
+    renderToolkit();
+    if (lastQuery) runSearch(lastQuery.q, lastQuery.opts);
+  }
+}
+
+function draftEmail(a) {
+  return `Subject: A short play to help with ${a.theme.toLowerCase()}
+
+Hi {{FirstName}},
+
+Following up on our last conversation about ${a.theme.toLowerCase()} — I wanted to share something we've used with a handful of similar customers that's been landing well.
+
+It's a ${a.type.toLowerCase()} called "${a.title}". ${a.desc}
+
+If you have 20 minutes next week, I'd like to walk you through it on your tenant. We can also use it as the basis for a short ${state.persona === "presales" ? "discovery session" : "deployment scope"} to map this to your environment.
+
+Open to Tuesday or Thursday afternoon — let me know what works.
+
+— {{YourName}}
+{{Partner Org}}`;
+}
+
+function buildDemoFlow(a) {
+  return `Goal: in 5 minutes, make the value of "${a.title}" tangible to a customer.
+
+00:00 — 00:30  Frame the problem
+  • One slide / one sentence: the specific risk this addresses.
+  • Tie it back to a recent customer signal (breach in their industry, audit finding, etc.).
+
+00:30 — 02:30  Live demo
+  • Open the ${a.type.toLowerCase()} in your demo tenant.
+  • Walk through the 3 highest-impact screens — narrate decisions, not features.
+  • Land one "aha" moment: e.g., how fast a risky app/user/policy surfaces.
+
+02:30 — 03:30  Translate to their world
+  • Ask: "Where in your environment would this show up first?"
+  • Capture their answer — it becomes the discovery hook.
+
+03:30 — 05:00  Close on next step
+  • Offer either: (a) a 30-min workshop on their tenant, or (b) a short pilot scope.
+  • Send the matching follow-up email (the "Draft customer email" action will pre-fill it).`;
+}
+
+function renderToolkit() {
+  $("#toolkitCount").textContent = state.toolkit.length;
+  const items = $("#toolkitItems");
+  items.innerHTML = "";
+  if (state.toolkit.length === 0) {
+    items.innerHTML = `<div style="font-size:12px;color:var(--cp-text-muted);padding:6px 2px;">Nothing here yet. Add assets from search results to assemble a per-customer toolkit.</div>`;
+    $("#drawerHint").textContent = "Click results' \"Add to toolkit\" to collect assets · click here to expand";
+    return;
+  }
+  $("#drawerHint").textContent = "Click to expand · export as a customer-ready package";
+  state.toolkit.forEach(id => {
+    const a = ASSETS.find(x => x.id === id);
+    if (!a) return;
+    const el = document.createElement("div");
+    el.className = "toolkit-item";
+    el.innerHTML = `
+      <div class="ti-title">${escapeHtml(a.title)}</div>
+      <div class="ti-meta">${escapeHtml(a.type)} · ${escapeHtml(a.theme)}</div>
+      <div class="toolkit-actions">
+        <button class="ti-btn primary" data-export="${a.id}">Export</button>
+        <button class="ti-btn" data-remove="${a.id}">Remove</button>
+      </div>
+    `;
+    el.querySelector("[data-remove]").onclick = (e) => {
+      e.stopPropagation();
+      state.toolkit = state.toolkit.filter(x => x !== id);
+      renderToolkit();
+      if (lastQuery) runSearch(lastQuery.q, lastQuery.opts);
+    };
+    el.querySelector("[data-export]").onclick = (e) => {
+      e.stopPropagation();
+      openModal("Export toolkit",
+        "AI-generated package summary — ready to attach in Teams or email to the customer",
+        exportToolkitText());
+    };
+    items.appendChild(el);
+  });
+}
+
+function exportToolkitText() {
+  const items = state.toolkit.map(id => ASSETS.find(x => x.id === id)).filter(Boolean);
+  return `Customer-ready package — generated ${new Date().toLocaleDateString()}
+
+This package includes ${items.length} asset${items.length===1?"":"s"} tailored to your security conversation:
+
+${items.map((a,i) => `  ${i+1}. ${a.title}
+     ${a.type} · ${a.theme} · ${a.stages.join(" → ")}
+     ${a.desc}`).join("\n\n")}
+
+Suggested sequence: position with the deck/guide, run the demo or script in their tenant, leave the battle card / one-pager as a follow-up handout.
+
+— Generated by Security Resource Page · Microsoft Security CxE Partner toolkit`;
+}
+
+function openModal(title, sub, body) {
+  $("#modalTitle").textContent = title;
+  $("#modalSub").textContent = sub;
+  $("#modalBody").textContent = body;
+  $("#modal").classList.add("open");
+}
+
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c])); }
+
+// =====================================================================
+// Asset previews — type-driven mock content
+// =====================================================================
+const PREVIEWS = {
+  "a1": { kind: "slides", slides: [
+    { title: "Why now", body: "SaaS-first work has outpaced governance. 80% of orgs run apps IT hasn't reviewed." },
+    { title: "Your environment, today", body: "Live discovery view: apps in use, identity surface, data exposure scoring." },
+    { title: "The three risks that bite first", body: "Shadow SaaS · OAuth consent grants · Risky session activity." },
+    { title: "Defender for Cloud Apps in one screen", body: "Discover → assess → govern → monitor — unified across Microsoft and 3rd-party SaaS." },
+    { title: "30-day pilot plan", body: "Week 1: connect. Week 2: discover. Week 3: govern. Week 4: report and renew." },
+    { title: "Customer proof: Northwind Health", body: "Reduced unsanctioned apps from 240 → 38 in 60 days; cut compliance audit prep by half." },
+  ]},
+  "a2": { kind: "timeline", steps: [
+    { t: "00:00", body: "<strong>Frame:</strong> 'In the next 5 minutes, let's see exactly what SaaS apps your people are using — without you ever asking them.'" },
+    { t: "00:30", body: "<strong>Open Defender XDR → Cloud apps → Discovered apps.</strong> Sort by Risk score descending. Let the customer's eyes find the surprise themselves." },
+    { t: "01:30", body: "<strong>Drill into a high-risk app.</strong> Show user count, traffic volume, data uploaded, compliance category. Narrate as a story, not a feature list." },
+    { t: "02:30", body: "<strong>OAuth consent view.</strong> Sort by 'High severity'. Almost every tenant has at least one shocker. Pause here." },
+    { t: "03:30", body: "<strong>Govern action:</strong> tag, block, or require approval. Don't actually click block — show the dialog and back out." },
+    { t: "04:30", body: "<strong>Close on the question:</strong> 'If we ran this every Monday morning, what would change for your team?' Capture their answer — it's the discovery hook." },
+  ]},
+  "a3": { kind: "objections", items: [
+    { q: "We already block Copilot at the firewall.", a: "Shadow LLM use is the bigger risk. Purview shows the chat traffic and labels it, so you can allow Copilot deliberately, not by exception." },
+    { q: "Doesn't Copilot honor existing permissions?", a: "Yes, for direct retrieval. But it can still surface oversharing your team didn't realize existed. Purview labels the underlying data, not the request." },
+    { q: "Our sensitivity labels aren't deployed.", a: "That's actually the value. The Copilot rollout becomes the forcing function and the budget unlock for the labeling work you've been deferring." },
+    { q: "What about open-source LLMs and personal ChatGPT?", a: "Endpoint DLP extends the same labels to clipboard and browser uploads — covers the Bring-Your-Own-LLM gap that scares boards." },
+    { q: "Won't this slow down adoption?", a: "Configured well, users see one prompt: 'this contains PII — confirm to proceed.' Adoption data from 12 deployments shows <2% friction." },
+  ]},
+  "a4": { kind: "phases", items: [
+    { name: "Prereqs check", t: "20 min", body: "Verify Sentinel workspace, Defender XDR plan, billable subscription, and global admin access." },
+    { name: "Capacity provisioning", t: "30 min", body: "Provision SCU (Security Compute Units). Start at 1 SCU for pilot, scale on usage." },
+    { name: "Role assignments", t: "30 min", body: "Assign Copilot Owner to the deploy lead, Copilot Contributor to SOC team." },
+    { name: "Plugin connection", t: "60 min", body: "Connect Defender XDR, Sentinel, Intune, Entra. Validate each plugin with a smoke-test prompt." },
+    { name: "Promptbook seeding", t: "60 min", body: "Import the 12 starter promptbooks (incident triage, phishing, posture). Pin the top 3." },
+    { name: "Validation + handoff", t: "30 min", body: "Run the 8-step validation checklist. Generate the deployment report." },
+  ]},
+  "a5": { kind: "code", lang: "PowerShell", code:
+`# Deploy-CABaseline.ps1  ·  v2.4  ·  Idempotent
+# Applies the 8 highest-impact CA policies across one or many tenants.
+
+param(
+  [string[]] $TenantIds,
+  [switch]   $WhatIf,
+  [string]   $ReportPath = ".\\ca-report.html"
+)
+
+$policies = @(
+  @{ Name = "Block legacy authentication"
+     Conditions = @{ ClientAppTypes = @("ExchangeActiveSync","Other") }
+     Grant      = @{ BuiltInControls = @("block") } }
+  @{ Name = "Require MFA for all users"
+     Conditions = @{ Users = @{ IncludeAll = $true }; Apps = @{ IncludeAll = $true } }
+     Grant      = @{ BuiltInControls = @("mfa") } }
+  @{ Name = "Require compliant device for M365"
+     Grant      = @{ BuiltInControls = @("compliantDevice") } }
+  # ... 5 more
+)
+
+foreach ($tid in $TenantIds) {
+  Connect-MgGraph -TenantId $tid -Scopes "Policy.ReadWrite.ConditionalAccess"
+  foreach ($p in $policies) {
+    if (-not (Get-MgIdentityConditionalAccessPolicy -Filter "displayName eq '$($p.Name)'")) {
+      if ($WhatIf) { Write-Host "WhatIf: would create $($p.Name)" }
+      else        { New-MgIdentityConditionalAccessPolicy -BodyParameter $p }
+    } else { Write-Host "Exists: $($p.Name) — skipping" }
+  }
+  New-CABaselineReport -TenantId $tid -OutputPath $ReportPath
+}` },
+  "a6": { kind: "email",
+    subject: "A 20-minute conversation that could change how your SOC operates",
+    body: `Hi {{FirstName}},
+
+I've been working with a handful of customers in {{Industry}} who, like you, are trying to do more with the same SOC team. The pattern I'm seeing: the tools aren't the bottleneck — the time to correlate signal across them is.
+
+Two questions I'd love to ask you in 20 minutes:
+
+  1. When an alert fires today, how many tools does your analyst touch before deciding what to do?
+  2. What would change for your team if the first draft of that investigation was already written?
+
+If those questions land, I can show you exactly what that looks like with Microsoft Sentinel and Copilot for Security on your data — in your tenant, in 5 minutes, with no commitment.
+
+Open to Tuesday or Thursday next week?
+
+— {{YourName}}
+{{Partner Org}}` },
+  "a7": { kind: "phases", items: [
+    { name: "Detect",      t: "T+0",     body: "Defender for Endpoint flags risky device. Automation tags 'high-risk' in Intune via Graph webhook." },
+    { name: "Contain",     t: "T+1 min", body: "Conditional Access blocks corporate apps for that device. User sees a clear, non-scary recovery link." },
+    { name: "Investigate", t: "T+5 min", body: "SOC opens device timeline in Defender XDR. Auto-summary highlights the 3 most suspicious events." },
+    { name: "Remediate",   t: "T+15 min",body: "Confirmed malicious: full wipe via Intune. False positive: clear tag, re-evaluate CA. Both one-click." },
+    { name: "Learn",       t: "T+1 day", body: "Append findings to the hunting query library. Update the false-positive ML model." },
+  ]},
+  "a8": { kind: "pricing", tiers: [
+    { tier: "Microsoft 365 Business Premium",         price: "$22 / user / mo",   includes: "Defender for Business · Intune · Entra ID P1 · Office apps · Email security" },
+    { tier: "+ Defender Suite for Business Premium",  price: "+ $10 / user / mo", includes: "Adds Defender for Office P2 · Defender for Identity · Defender for Cloud Apps" },
+    { tier: "M365 E5 Security (à la carte)",          price: "$12 / user / mo",   includes: "Same Defender suite, layered onto any E3 base. Cleanest path if already on E3." },
+  ]},
+  "a9": { kind: "questions", items: [
+    "If a competitor of yours had a breach next week, what would your board ask you on Monday?",
+    "Where in the business are people most likely to use AI without telling you?",
+    "What's the single security investment you've made that you can't measure the ROI of?",
+    "When was the last time someone in your org sent a phishing test? What was the click rate?",
+    "What's the regulator your industry fears most, and what are they signalling now?",
+    "If your top admin left tomorrow, what would break first?",
+    "How long does it take to off-board a contractor today? End-to-end, including SaaS?",
+  ]},
+  "a10": { kind: "code", lang: "YAML + PowerShell", code:
+`# tenants.yml  ·  declarative — one line per customer
+tenants:
+  - id: 11111111-aaaa-bbbb-cccc-222222222222
+    name: Northwind Health
+    profile: healthcare-baseline
+    region: eastus
+  - id: 33333333-dddd-eeee-ffff-444444444444
+    name: Contoso Manufacturing
+    profile: manufacturing-strict
+    region: westeurope
+
+# Run:  pwsh ./deploy.ps1 -ConfigPath tenants.yml -WhatIf
+
+# deploy.ps1
+foreach ($t in (Get-Content tenants.yml | ConvertFrom-Yaml).tenants) {
+  Connect-MgGraph -TenantId $t.id
+  New-AzResourceGroupDeployment \`
+    -ResourceGroupName "rg-defender-$($t.profile)" \`
+    -TemplateFile "./profiles/$($t.profile).bicep" \`
+    -Location $t.region
+  Invoke-PostDeploy -TenantId $t.id -Profile $t.profile
+}` },
+  "a11": { kind: "video", duration: "4:12", chapters: [
+    { t: "0:00", title: "Why 'AI-native security' is not a buzzword" },
+    { t: "0:42", title: "The three customer questions you'll hear in 2026" },
+    { t: "1:38", title: "How Microsoft's security stack answers each one" },
+    { t: "2:51", title: "The one-line opener that earns you the meeting" },
+    { t: "3:30", title: "Where this module ends and the next one starts" },
+  ]},
+  "a12": { kind: "crosswalk", items: [
+    { left: "164.308(a)(1) — Security Management Process", right: "Secure Score · Defender for Cloud · Sentinel UEBA" },
+    { left: "164.308(a)(3) — Workforce Security",          right: "Entra ID Governance · access reviews · lifecycle workflows" },
+    { left: "164.308(a)(4) — Access Management",           right: "Conditional Access · PIM · Just-in-time admin" },
+    { left: "164.308(a)(5) — Awareness & Training",        right: "Attack simulation training in Defender for Office 365" },
+    { left: "164.312(a)(1) — Access Control",              right: "Sensitivity labels · DLP · Information Barriers" },
+    { left: "164.312(b) — Audit Controls",                 right: "Unified audit log · Sentinel connectors · Purview eDiscovery" },
+    { left: "164.312(e)(1) — Transmission Security",       right: "Purview Message Encryption · TLS enforcement policies" },
+  ]},
+  "a13": { kind: "patterns", items: [
+    { name: "MNPI mishandling", desc: "Detects MNPI keywords + recipient outside research wall + Bloomberg/Refinitiv attachments." },
+    { name: "Cross-border data transfer", desc: "Catches PII or trade data leaving FATF-restricted jurisdictions; integrates with CA geo-fencing." },
+    { name: "Trader chat exfiltration", desc: "Insider Risk pattern: high-volume Teams DM + post-bonus-cycle + access spike to client lists." },
+    { name: "PCI cardholder data in email", desc: "Pre-tuned PCI DSS classifier with deterministic + ML signals; bundled with auto-quarantine flow." },
+    { name: "Suspicious wire-instruction edits", desc: "Watches SharePoint version history for wire-instruction docs edited outside business hours." },
+  ]},
+  "a14": { kind: "questions", items: [
+    "Do you have a published sensitivity-label taxonomy that all users see in Office?",
+    "Is MFA enforced for 100% of users — including service accounts and break-glass admins?",
+    "Do you know which SaaS apps your users are signing into with corporate identity, today?",
+    "Have you run a tabletop exercise for a data-exfiltration incident in the last 12 months?",
+    "Can you, in one query, list every guest user with access to confidential SharePoint sites?",
+    "Is Defender for Endpoint deployed and enforcing ASR rules on every managed device?",
+    "Have you reviewed OAuth app consents granted to third-party apps in the last quarter?",
+  ]},
+};
+
+// =====================================================================
+// Scenario briefs — curated openings for known prompts
+// =====================================================================
+const SCENARIOS = {
+  "How can I help a customer identify shadow SaaS apps after a Copilot rollout?": {
+    frame: "Customers say 'we approved Copilot' but their users are also using a long tail of other AI tools you haven't approved. That's the opening — not Copilot itself, but everything around it.",
+    play: "Open with discovery (don't pitch). Run the 5-min Shadow SaaS demo on <strong>their</strong> tenant. End on the OAuth consents view — it always lands.",
+    outcome: "A 30-min workshop on the customer's tenant, scheduled within 2 weeks, with the CIO + CISO both in the room.",
+    time: "5 min to demo · 30 min to workshop · 2 weeks to close the pilot",
+    sequence: ["a2","a1","a14","a6"],
+  },
+  "What's the right Purview pitch for a healthcare customer worried about Copilot data leakage?": {
+    frame: "Hospital CISOs care about HIPAA, not features. Lead with the regulator's language. Lead with the crosswalk, not the demo.",
+    play: "Open with the HIPAA crosswalk one-pager · then the Copilot DLP battle card · close with a workshop using the discovery facilitation guide.",
+    outcome: "Customer agrees to a 4-week Purview pilot with HIPAA-aligned policies pre-deployed.",
+    time: "1 meeting to position · 1 meeting to demo · 4 weeks to pilot",
+    sequence: ["a12","a3","a9"],
+  },
+  "Build a 30-day Sentinel pilot plan for a 1,500-seat manufacturer.": {
+    frame: "1,500 seats is the sweet spot where Sentinel pays back inside the pilot, especially if the customer is bleeding on a legacy SIEM contract. Frame the ROI in their cost language.",
+    play: "Send the SOC modernization email first. When they respond, propose the runbook + multi-tenant toolkit so they can see the path beyond pilot.",
+    outcome: "30-day Sentinel pilot kicks off, with a clear path to production rollout in Q3.",
+    time: "30-day pilot · 60-day production decision",
+    sequence: ["a6","a4","a10"],
+  },
+  "Customer is on M365 E3 — make the upgrade case to E5 Security in 5 bullets.": {
+    frame: "E3 → E5 Security is the cheapest upgrade Microsoft sells per dollar of capability added. The trick is making the customer feel the gap before quoting it.",
+    play: "Run the readiness assessment first — let the customer's own answers expose the E3 gaps. Then hand them the pricing one-pager.",
+    outcome: "Customer commits to a renewal with E5 Security added; ~50% margin on the upgrade.",
+    time: "1 meeting to assess · 1 meeting to quote",
+    sequence: ["a14","a8","a3"],
+  },
+  "Show me a 5-minute demo flow for Conditional Access on mobile devices.": {
+    frame: "Mobile is the unloved security frontier. Demos here always over-perform expectations because customers have never seen this depth.",
+    play: "Walk through detection → containment → user experience. Show the recovery path — that's what wins.",
+    outcome: "Customer agrees to a 2-week CA hardening sprint, scoped against the script pack.",
+    time: "5 min to demo · 2 weeks to harden",
+    sequence: ["a7","a5","a14"],
+  },
+  "Help me show a customer how to spot shadow SaaS in 10 minutes": {
+    frame: "10 minutes is enough — the discovery view sells itself if you let the customer find their own surprise.",
+    play: "5-min demo script first, then offer a 30-min workshop on their tenant.",
+    outcome: "Workshop scheduled within 2 weeks.",
+    time: "10 min to demo · 30 min to workshop",
+    sequence: ["a2","a1"],
+  },
+  "Build a Copilot for Security pilot plan for a 1,500-seat manufacturing customer": {
+    frame: "Mid-size manufacturers usually have under-staffed SOCs. Copilot for Security lands hardest where the team is small but the alert volume is big.",
+    play: "Lead with the quick-deploy runbook; pair with the SOC modernization email for the executive sponsor.",
+    outcome: "Pilot live in under 30 days, with quantified analyst-hours saved.",
+    time: "4 hours to deploy · 30-day pilot",
+    sequence: ["a4","a6","a3"],
+  },
+  "Hospital wants a HIPAA-aligned Purview deployment story": {
+    frame: "Hospitals buy on auditor language. The crosswalk closes the meeting before the demo even starts.",
+    play: "Open with the HIPAA crosswalk; demo Purview DLP; close with the discovery workshop guide.",
+    outcome: "Customer commits to a phased Purview rollout aligned to their next HIPAA audit.",
+    time: "1 meeting to align · phased deployment over the quarter",
+    sequence: ["a12","a3","a9"],
+  },
+  "Customer renewing M365 E3 — make the case to upgrade to E5 Security": {
+    frame: "Renewals are upgrade moments. The pricing math on E5 Security beats à la carte every time.",
+    play: "Assessment → pricing one-pager → battle card for objections.",
+    outcome: "Renewal closes with the E5 Security add-on attached.",
+    time: "2 meetings to close",
+    sequence: ["a14","a8","a3"],
+  },
+};
+
+// =====================================================================
+// Asset sheet renderer
+// =====================================================================
+function openAssetSheet(a) {
+  $("#sheetEyebrow").textContent = `${a.type} · ${a.theme}`;
+  $("#sheetTitle").textContent = a.title;
+  const meta = $("#sheetMeta"); meta.innerHTML = "";
+  [
+    ...a.stages.map(s => s),
+    ...(a.titanModule ? ["🎓 " + a.titanModule] : []),
+    ...(a.industries[0] !== "*" ? a.industries : []),
+    ...a.sizes.map(s => s === "Small" ? "Up to 300 seats" : s === "Mid" ? "300–2,500 seats" : "2,500+ seats"),
+  ].forEach(t => {
+    const b = document.createElement("span");
+    b.className = "meta-badge";
+    b.textContent = t;
+    meta.appendChild(b);
+  });
+
+  const body = $("#sheetBody");
+  body.innerHTML = "";
+
+  const sum = document.createElement("div");
+  sum.className = "sheet-section";
+  sum.innerHTML = `<h4>Summary</h4><p>${escapeHtml(a.desc)}</p>`;
+  body.appendChild(sum);
+
+  const p = PREVIEWS[a.id];
+  const prev = document.createElement("div");
+  prev.className = "sheet-section";
+  prev.innerHTML = `<h4>Preview</h4>${p ? renderPreview(p) : `<p style="color:var(--cp-text-muted);">No preview available for this asset yet.</p>`}`;
+  body.appendChild(prev);
+
+  const cta = document.createElement("div");
+  cta.className = "sheet-cta";
+  cta.innerHTML = `
+    <button class="action-btn primary" id="ctaPrimary">Open in source</button>
+    <button class="action-btn" id="ctaEmail">✉ Draft customer email</button>
+    <button class="action-btn" id="ctaDemo">▶ Build 5-min demo flow</button>
+    <button class="action-btn" id="ctaToolkit">${state.toolkit.includes(a.id) ? "✓ In toolkit" : "+ Add to toolkit"}</button>
+  `;
+  body.appendChild(cta);
+  cta.querySelector("#ctaPrimary").onclick = () => openModal(`Open: ${a.title}`,
+    "In production this would deep-link into SharePoint / Stream / GitHub",
+    `[Stub — would navigate to the canonical ${a.type.toLowerCase()} source]`);
+  cta.querySelector("#ctaEmail").onclick = () => { closeSheet(); assetAction("email", a.id); };
+  cta.querySelector("#ctaDemo").onclick = () => { closeSheet(); assetAction("demo", a.id); };
+  cta.querySelector("#ctaToolkit").onclick = () => {
+    assetAction("toolkit", a.id);
+    cta.querySelector("#ctaToolkit").textContent = state.toolkit.includes(a.id) ? "✓ In toolkit" : "+ Add to toolkit";
+  };
+
+  $("#sheet").classList.add("open");
+  $("#sheetBg").classList.add("open");
+}
+
+function closeSheet() {
+  $("#sheet").classList.remove("open");
+  $("#sheetBg").classList.remove("open");
+}
+$("#sheetClose").onclick = closeSheet;
+$("#sheetBg").onclick = closeSheet;
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
+
+function renderPreview(p) {
+  switch (p.kind) {
+    case "slides":
+      return `<div class="preview-slides">${p.slides.map((s,i) => `
+        <div class="slide-card">
+          <div class="slide-num">SLIDE ${String(i+1).padStart(2,"0")}</div>
+          <div class="slide-title">${escapeHtml(s.title)}</div>
+          <div class="slide-body">${escapeHtml(s.body)}</div>
+        </div>`).join("")}</div>
+        <p style="font-size:11.5px;color:var(--cp-text-soft);margin-top:10px;">Showing 6 of ~20 slides</p>`;
+    case "timeline":
+      return p.steps.map(s => `
+        <div class="timeline-row">
+          <div class="timeline-time">${s.t}</div>
+          <div class="timeline-body">${s.body}</div>
+        </div>`).join("");
+    case "objections":
+      return p.items.map(o => `
+        <div class="objection-row">
+          <div class="obj-q">${escapeHtml(o.q)}</div>
+          <div class="obj-a">${escapeHtml(o.a)}</div>
+        </div>`).join("");
+    case "phases":
+      return p.items.map(ph => `
+        <div class="phase-card">
+          <div class="phase-head">${escapeHtml(ph.name)}<span class="phase-time">${escapeHtml(ph.t)}</span></div>
+          <div class="phase-body">${escapeHtml(ph.body)}</div>
+        </div>`).join("");
+    case "code":
+      return `<div style="font-size:11.5px;color:var(--cp-text-soft);margin-bottom:8px;">${escapeHtml(p.lang)}</div>
+              <pre class="code-block">${escapeHtml(p.code)}</pre>`;
+    case "email":
+      return `<div class="phase-card" style="border-left-color:var(--cp-link);">
+                <div style="font-size:11.5px;color:var(--cp-text-soft);margin-bottom:4px;">Subject</div>
+                <div style="font-weight:600;font-size:14px;margin-bottom:14px;">${escapeHtml(p.subject)}</div>
+                <pre style="margin:0;font-family:inherit;font-size:13px;line-height:1.55;color:var(--cp-text);white-space:pre-wrap;">${escapeHtml(p.body)}</pre>
+              </div>`;
+    case "pricing":
+      return `<table class="pricing-tbl">
+                <thead><tr><th>Tier</th><th>Price</th><th>What's included</th></tr></thead>
+                <tbody>${p.tiers.map(t => `<tr>
+                  <td>${escapeHtml(t.tier)}</td>
+                  <td style="white-space:nowrap;color:var(--cp-accent);font-weight:600;">${escapeHtml(t.price)}</td>
+                  <td>${escapeHtml(t.includes)}</td>
+                </tr>`).join("")}</tbody>
+              </table>`;
+    case "questions":
+      return p.items.map((q,i) => `
+        <div class="question-card"><span class="q-num">${i+1}</span>${escapeHtml(q)}</div>`).join("")
+        + `<p style="font-size:11.5px;color:var(--cp-text-soft);margin-top:10px;">Showing ${p.items.length} of 15+ questions</p>`;
+    case "video":
+      return `<div class="video-thumb" title="Play (prototype)">▶</div>
+              <div style="font-size:12.5px;color:var(--cp-text-muted);margin-bottom:8px;">Duration: ${escapeHtml(p.duration)}</div>
+              <div class="chapter-list">${p.chapters.map(ch => `
+                <div><span class="ch-time">${escapeHtml(ch.t)}</span>${escapeHtml(ch.title)}</div>`).join("")}</div>`;
+    case "crosswalk":
+      return `<table class="pricing-tbl"><thead><tr><th>Control</th><th>Mapped Microsoft features</th></tr></thead>
+              <tbody>${p.items.map(i => `<tr><td style="width:42%;">${escapeHtml(i.left)}</td><td>${escapeHtml(i.right)}</td></tr>`).join("")}</tbody></table>`;
+    case "patterns":
+      return p.items.map(i => `
+        <div class="phase-card" style="border-left-color:var(--cp-success);">
+          <div class="phase-head">${escapeHtml(i.name)}</div>
+          <div class="phase-body">${escapeHtml(i.desc)}</div>
+        </div>`).join("");
+    default:
+      return `<p style="color:var(--cp-text-muted);">Preview type not implemented.</p>`;
+  }
+}
+
+renderToolkit();
+</script>
+</body>
+</html>
