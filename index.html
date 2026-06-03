@@ -532,6 +532,16 @@
   .meta-badge.t-convo    { background: var(--t-convo-s);    color: var(--t-convo);    border-color: transparent; font-weight: 600; }
   .meta-badge.type { background: var(--cp-text); color: var(--cp-bg); border-color: transparent; font-weight: 600; }
   html[data-theme="dark"] .meta-badge.type { background: var(--cp-text); color: var(--cp-bg-elevated); }
+  .meta-badge.live {
+    background: var(--t-trust);
+    color: white;
+    border-color: transparent;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  html[data-theme="dark"] .meta-badge.live { background: var(--t-trust); color: #0c1b13; }
+  .asset-card.is-live { box-shadow: 0 1px 3px rgba(22,163,74,0.10), 0 6px 18px rgba(22,163,74,0.08); }
+  html[data-theme="dark"] .asset-card.is-live { box-shadow: 0 1px 3px rgba(74,222,128,0.18), 0 6px 18px rgba(74,222,128,0.10); }
   .asset-desc { font-size: 13px; color: var(--cp-text-muted); margin: 6px 0 10px; line-height: 1.55; }
   .asset-actions {
     display: flex;
@@ -1090,9 +1100,9 @@
 
 <div class="trending" id="trending">
   <strong>Trending this week</strong>
+  <span class="trending-item" data-q="Help me kick off a Microsoft Purview deployment for a healthcare customer.">🟢 Live · Healthcare Purview kickoff</span>
+  <span class="trending-item" data-q="Generate a SOW for a 500-seat customer wanting MIP + DLP.">🟢 Live · SOW for MIP + DLP</span>
   <span class="trending-item" data-q="Help me show a customer how to spot shadow SaaS in 10 minutes">Shadow SaaS in 10 min</span>
-  <span class="trending-item" data-q="Build a Copilot for Security pilot plan for a 1,500-seat manufacturing customer">Copilot for Security pilot plan</span>
-  <span class="trending-item" data-q="Hospital wants a HIPAA-aligned Purview deployment story">HIPAA + Purview</span>
   <span class="trending-item" data-q="Customer renewing M365 E3 — make the case to upgrade to E5 Security">E3 → E5 Security upgrade</span>
 </div>
 
@@ -1209,6 +1219,40 @@
 // Mock asset corpus
 // =====================================================================
 const ASSETS = [
+  // ============ NPF Phase 1 — LIVE, shipping assets ============
+  { id: "npf1", live: true, url: "https://aka.ms/MIP-Labeling-Assistant",
+    title: "Guided Labeling Assistant",
+    type: "Interactive tool", theme: "Trust AI with your Data", stages: ["Decide","Deploy"],
+    persona: ["presales","delivery"], industries: ["*"], sizes: ["Small","Mid","Enterprise"],
+    desc: "Guides organizations through Microsoft Purview sensitivity-label setup — from picking the right labels for your industry, to classifying specific documents, to exporting audit-ready plans. Built for partner-led customer engagements.",
+    titanModule: null },
+  { id: "npf2", live: true, url: "https://aka.ms/MIP-Industry-OnePagers",
+    title: "MIP Industry One-Pagers",
+    type: "Industry guide", theme: "Industry", stages: ["Position","Decide"],
+    persona: ["presales"], industries: ["Healthcare","Financial Services","Legal","Education","Retail"],
+    sizes: ["Small","Mid","Enterprise"],
+    desc: "Industry-specific MIP label recommendations for Healthcare, Financial Services, Legal, Education, and Retail. Ready to print and leave behind after a customer meeting.",
+    titanModule: null },
+  { id: "npf3", live: true, url: "https://aka.ms/SOW-Generator",
+    title: "SOW Generator",
+    type: "Interactive tool", theme: "Customer conversation", stages: ["Sell","Deploy"],
+    persona: ["presales","delivery"], industries: ["*"], sizes: ["Small","Mid","Enterprise"],
+    desc: "Configure customer-specific Purview deployment settings and generate a ready-to-send Statement of Work template — no copy-paste from old SOWs.",
+    titanModule: null },
+  { id: "npf4", live: true, url: "https://aka.ms/Deploy-Scripts",
+    title: "PowerShell Deployment Script for MIP",
+    type: "Script", theme: "Trust AI with your Data", stages: ["Deploy"],
+    persona: ["delivery"], industries: ["*"], sizes: ["Small","Mid","Enterprise"],
+    desc: "Automates MIP deployment in customer tenants — sensitivity labels, DLP policies, retention policies, and tenant settings. Idempotent, with rollback.",
+    titanModule: null },
+  { id: "npf5", live: true, url: "https://aka.ms/Github-CopilotCli-Guide",
+    title: "Quick Guide to GitHub Copilot CLI (with Microsoft Learn MCP)",
+    type: "Guide", theme: "Get Ready for AI", stages: ["Enable"],
+    persona: ["presales","delivery"], industries: ["*"], sizes: ["Small","Mid","Enterprise"],
+    desc: "Helps partners set up GitHub Copilot CLI with the Microsoft Learn MCP server, so they can use natural language to find answers from official Microsoft docs on M365 licensing and compliance.",
+    titanModule: null },
+
+  // ============ Mock / illustrative assets ============
   { id: "a1", title: "Defender for Cloud Apps — Customer Overview Deck",
     type: "Deck", theme: "Defend with AI", stages: ["Position","Sell"], persona: ["presales"],
     industries: ["*"], sizes: ["Small","Mid"],
@@ -1282,9 +1326,9 @@ const ASSETS = [
 ];
 
 const SUGGESTED_PROMPTS = [
+  "Help me kick off a Microsoft Purview deployment for a healthcare customer.",
   "How can I help a customer identify shadow SaaS apps after a Copilot rollout?",
-  "What's the right Purview pitch for a healthcare customer worried about Copilot data leakage?",
-  "Build a 30-day Sentinel pilot plan for a 1,500-seat manufacturer.",
+  "Generate a SOW for a 500-seat customer wanting MIP + DLP.",
   "Customer is on M365 E3 — make the upgrade case to E5 Security in 5 bullets.",
   "Show me a 5-minute demo flow for Conditional Access on mobile devices."
 ];
@@ -1497,6 +1541,10 @@ function aiSummaryFor(q, theme, assets) {
   if (assets.length === 0) {
     return `No close matches in the partner library yet for this ${persona}. Try broadening the stage filter, or rephrase the problem in terms of the business outcome the customer is trying to reach.`;
   }
+  const liveCount = assets.filter(a => a.live).length;
+  const livePrefix = liveCount > 0
+    ? `<strong>${liveCount} of these are NPF Phase 1 assets shipping today</strong> — your partners can use them this week. `
+    : "";
   const intro = `For this ${persona}, the strongest combination from the partner library is:`;
   const refs = assets.slice(0,3).map((a,i) => `<strong>${a.title}</strong><span class="citation-ref">${i+1}</span>`).join(", ");
   const close = theme === "Defend with AI"
@@ -1508,7 +1556,7 @@ function aiSummaryFor(q, theme, assets) {
     : theme === "Industry"
     ? " Open with the industry crosswalk so the customer immediately sees their regulator's language reflected back."
     : " Combine the pricing one-pager with the workshop guide — partners report this is the fastest path from interest to PO.";
-  return `${intro} ${refs}.${close}`;
+  return `${livePrefix}${intro} ${refs}.${close}`;
 }
 
 async function runSearch(q, opts = {}) {
@@ -1622,13 +1670,14 @@ function renderAsset(a, idx) {
   const inToolkit = state.toolkit.includes(a.id);
   const themeClass = themeToClass(a.theme);
   const el = document.createElement("div");
-  el.className = `asset-card ${themeClass}`;
+  el.className = `asset-card ${themeClass}${a.live ? " is-live" : ""}`;
   el.innerHTML = `
     <div class="asset-head">
       <div class="asset-title">${escapeHtml(a.title)}</div>
       <span class="asset-rank">#${idx}</span>
     </div>
     <div class="asset-meta-row">
+      ${a.live ? `<span class="meta-badge live">✓ Live · NPF Phase 1</span>` : ""}
       <span class="meta-badge type">${escapeHtml(a.type)}</span>
       <span class="meta-badge ${themeClass}">${escapeHtml(a.theme)}</span>
       ${a.stages.map(s => `<span class="meta-badge">${s}</span>`).join("")}
@@ -1636,12 +1685,18 @@ function renderAsset(a, idx) {
     </div>
     <div class="asset-desc">${escapeHtml(a.desc)}</div>
     <div class="asset-actions">
-      <button class="action-btn primary" data-action="open" data-id="${a.id}">Preview asset</button>
+      <button class="action-btn primary" data-action="open" data-id="${a.id}">${a.live ? "Open live asset →" : "Preview asset"}</button>
       <button class="action-btn" data-action="email" data-id="${a.id}">✉ Draft customer email</button>
       <button class="action-btn" data-action="demo" data-id="${a.id}">▶ Build 5-min demo flow</button>
       <button class="action-btn" data-action="toolkit" data-id="${a.id}">${inToolkit ? "✓ In toolkit" : "+ Add to toolkit"}</button>
     </div>
   `;
+  el.querySelectorAll("[data-action]").forEach(b => {
+    b.onclick = (e) => { e.stopPropagation(); assetAction(b.dataset.action, a.id); };
+  });
+  el.addEventListener("click", () => openAssetSheet(a));
+  return el;
+}
   el.querySelectorAll("[data-action]").forEach(b => {
     b.onclick = (e) => { e.stopPropagation(); assetAction(b.dataset.action, a.id); };
   });
@@ -1666,7 +1721,11 @@ function assetAction(action, id) {
   const a = ASSETS.find(x => x.id === id);
   if (!a) return;
   if (action === "open") {
-    openAssetSheet(a);
+    if (a.live && a.url) {
+      window.open(a.url, "_blank", "noopener");
+    } else {
+      openAssetSheet(a);
+    }
   } else if (action === "email") {
     openModal(`Draft customer email — ${a.title}`, "AI-generated · review before sending", draftEmail(a));
   } else if (action === "demo") {
@@ -1784,6 +1843,75 @@ function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;"
 // Asset previews — type-driven mock content
 // =====================================================================
 const PREVIEWS = {
+  // ============ NPF Phase 1 — real shipping assets ============
+  "npf1": { kind: "phases", items: [
+    { name: "1. Pick your industry",     t: "Step",  body: "Healthcare, Financial Services, Legal, Education, Retail — or general. The wizard pre-loads the recommended label taxonomy for your pick." },
+    { name: "2. Review the label set",   t: "Step",  body: "See each suggested label with description, business justification, and example documents. Add, remove, or rename in place." },
+    { name: "3. Classify sample documents", t: "Step", body: "Upload or pick from a sample library. The assistant walks through label decisions one document at a time — great for end-user training." },
+    { name: "4. Export the deployment plan", t: "Step", body: "Audit-ready PDF + JSON config. Hand the JSON to the Deployment Script (asset #4) to apply across the customer tenant." },
+  ]},
+  "npf2": { kind: "crosswalk", items: [
+    { left: "Healthcare",         right: "HIPAA · HITECH · 21 CFR Part 11 — label set covers PHI, research data, billing records." },
+    { left: "Financial Services", right: "PCI DSS · FFIEC · MiFID II — labels for MNPI, trade data, client portfolios, cardholder data." },
+    { left: "Legal",              right: "Privilege · Work Product · Matter-bound — labels honor ethical walls and matter-level scoping." },
+    { left: "Education",          right: "FERPA · COPPA · student record protection — labels distinguish directory vs. educational records." },
+    { left: "Retail",             right: "PCI DSS · GDPR · CCPA — labels for cardholder data, customer PII, supplier contracts." },
+  ]},
+  "npf3": { kind: "phases", items: [
+    { name: "Customer profile",   t: "Form", body: "Customer name, seat count, region, existing SKUs, target compliance frameworks. ~2 min to fill." },
+    { name: "Scope selection",    t: "Form", body: "Tick MIP, DLP, Retention, Insider Risk, eDiscovery — the SOW assembles the matching scope sections automatically." },
+    { name: "Deliverables & timeline", t: "Form", body: "Pick from preset milestones (Discovery → Pilot → Go-live) with editable durations and acceptance criteria." },
+    { name: "Generate",           t: "Output", body: "Outputs a customer-branded, partner-branded Word document — ready to send. ~30 sec to generate." },
+  ]},
+  "npf4": { kind: "code", lang: "PowerShell", code:
+`# Deploy-PurviewBaseline.ps1
+# Applies the labels, DLP policies, retention, and tenant settings produced
+# by the Guided Labeling Assistant (asset #1) to a customer tenant.
+
+param(
+  [Parameter(Mandatory)] [string] $TenantId,
+  [Parameter(Mandatory)] [string] $LabelConfigPath,    # JSON from asset #1
+  [switch] $WhatIf,
+  [switch] $SkipRetention,
+  [string] $ReportPath = ".\\purview-deploy-report.html"
+)
+
+Connect-ExchangeOnline -Organization $TenantId
+Connect-IPPSSession    -Organization $TenantId
+
+$cfg = Get-Content $LabelConfigPath | ConvertFrom-Json
+
+Write-Host "Deploying $($cfg.labels.Count) sensitivity labels..."
+foreach ($l in $cfg.labels) {
+  if (Get-Label -Identity $l.name -ErrorAction SilentlyContinue) {
+    Set-Label -Identity $l.name -DisplayName $l.displayName -Tooltip $l.tooltip
+  } else {
+    if ($WhatIf) { Write-Host "WhatIf: would create label '$($l.name)'" }
+    else        { New-Label @l }
+  }
+}
+
+Write-Host "Publishing label policy..."
+New-LabelPolicy -Name "$($cfg.org) - Default" -Labels $cfg.labels.name -ExchangeLocation All
+
+Write-Host "Applying DLP policies..."
+foreach ($p in $cfg.dlp) { New-DlpCompliancePolicy @p }
+
+if (-not $SkipRetention) {
+  Write-Host "Applying retention..."
+  foreach ($r in $cfg.retention) { New-RetentionCompliancePolicy @r }
+}
+
+New-DeploymentReport -TenantId $TenantId -OutputPath $ReportPath
+Write-Host "Done. Report: $ReportPath"` },
+  "npf5": { kind: "phases", items: [
+    { name: "Install GitHub Copilot CLI", t: "5 min", body: "One command: gh extension install github/gh-copilot. Works on Windows, macOS, Linux." },
+    { name: "Add the Microsoft Learn MCP server", t: "5 min", body: "Drop a single config snippet to register the MCP server that fronts the Learn catalogue." },
+    { name: "Ask in natural language", t: "Use", body: "Examples: 'What SKU includes Defender for Identity?' · 'Show me the HIPAA crosswalk for Purview.' · 'How do I license Copilot for an SMB customer?' — answers cite the Learn page." },
+    { name: "Drop into customer calls", t: "Use", body: "Partners use it live in customer conversations to settle licensing questions on the spot instead of 'I'll get back to you.'" },
+  ]},
+
+  // ============ Mock previews ============
   "a1": { kind: "slides", slides: [
     { title: "Why now", body: "SaaS-first work has outpaced governance. 80% of orgs run apps IT hasn't reviewed." },
     { title: "Your environment, today", body: "Live discovery view: apps in use, identity surface, data exposure scoring." },
@@ -1946,6 +2074,20 @@ foreach ($t in (Get-Content tenants.yml | ConvertFrom-Yaml).tenants) {
 // Scenario briefs — curated openings for known prompts
 // =====================================================================
 const SCENARIOS = {
+  "Help me kick off a Microsoft Purview deployment for a healthcare customer.": {
+    frame: "This is the sweet spot for everything NPF Phase 1 just shipped. You can take a partner from 'where do I start?' to 'SOW sent' in a single afternoon, with industry-tuned label guidance baked in.",
+    play: "Open with the Healthcare industry one-pager (real labels, real examples) → walk the customer through the Guided Labeling Assistant → close by generating the SOW with the customer's specifics → hand the deployment script to the delivery team.",
+    outcome: "SOW signed within the week; deployment script runs in a single afternoon.",
+    time: "1 meeting to position · 1 working session to scope · 1 day to deploy",
+    sequence: ["npf2","npf1","npf3","npf4"],
+  },
+  "Generate a SOW for a 500-seat customer wanting MIP + DLP.": {
+    frame: "Don't start from a blank Word doc. The NPF SOW Generator gives you a customer-specific, partner-branded starting point in minutes, then the deployment script makes the SOW deliverable.",
+    play: "SOW Generator first (5 min) → review with the customer → deployment script for execution → the labeling assistant as a working session with their compliance lead.",
+    outcome: "SOW out the door same-day, with a clear deployment path attached.",
+    time: "Same-day SOW · 2-week deployment",
+    sequence: ["npf3","npf4","npf1","npf2"],
+  },
   "How can I help a customer identify shadow SaaS apps after a Copilot rollout?": {
     frame: "Customers say 'we approved Copilot' but their users are also using a long tail of other AI tools you haven't approved. That's the opening — not Copilot itself, but everything around it.",
     play: "Open with discovery (don't pitch). Run the 5-min Shadow SaaS demo on <strong>their</strong> tenant. End on the OAuth consents view — it always lands.",
@@ -1954,11 +2096,11 @@ const SCENARIOS = {
     sequence: ["a2","a1","a14","a6"],
   },
   "What's the right Purview pitch for a healthcare customer worried about Copilot data leakage?": {
-    frame: "Hospital CISOs care about HIPAA, not features. Lead with the regulator's language. Lead with the crosswalk, not the demo.",
-    play: "Open with the HIPAA crosswalk one-pager · then the Copilot DLP battle card · close with a workshop using the discovery facilitation guide.",
-    outcome: "Customer agrees to a 4-week Purview pilot with HIPAA-aligned policies pre-deployed.",
-    time: "1 meeting to position · 1 meeting to demo · 4 weeks to pilot",
-    sequence: ["a12","a3","a9"],
+    frame: "Hospital CISOs care about HIPAA, not features. Lead with the regulator's language and the industry-specific labels — then offer to deploy them.",
+    play: "Open with the Healthcare MIP one-pager · run the Guided Labeling Assistant in the working session · generate the SOW · hand off the deployment script.",
+    outcome: "Customer agrees to a 2-week Purview pilot with HIPAA-tuned labels pre-applied.",
+    time: "1 meeting to position · 2-week pilot",
+    sequence: ["npf2","npf1","npf3","npf4"],
   },
   "Build a 30-day Sentinel pilot plan for a 1,500-seat manufacturer.": {
     frame: "1,500 seats is the sweet spot where Sentinel pays back inside the pilot, especially if the customer is bleeding on a legacy SIEM contract. Frame the ROI in their cost language.",
@@ -2047,15 +2189,16 @@ function openAssetSheet(a) {
   const cta = document.createElement("div");
   cta.className = "sheet-cta";
   cta.innerHTML = `
-    <button class="action-btn primary" id="ctaPrimary">Open in source</button>
+    <button class="action-btn primary" id="ctaPrimary">${a.live ? "Open live asset →" : "Open in source"}</button>
     <button class="action-btn" id="ctaEmail">✉ Draft customer email</button>
     <button class="action-btn" id="ctaDemo">▶ Build 5-min demo flow</button>
     <button class="action-btn" id="ctaToolkit">${state.toolkit.includes(a.id) ? "✓ In toolkit" : "+ Add to toolkit"}</button>
   `;
   body.appendChild(cta);
-  cta.querySelector("#ctaPrimary").onclick = () => openModal(`Open: ${a.title}`,
-    "In production this would deep-link into SharePoint / Stream / GitHub",
-    `[Stub — would navigate to the canonical ${a.type.toLowerCase()} source]`);
+  cta.querySelector("#ctaPrimary").onclick = () => {
+    if (a.live && a.url) window.open(a.url, "_blank", "noopener");
+    else openModal(`Open: ${a.title}`, "In production this would deep-link into SharePoint / Stream / GitHub", `[Stub — would navigate to the canonical ${a.type.toLowerCase()} source]`);
+  };
   cta.querySelector("#ctaEmail").onclick = () => { closeSheet(); assetAction("email", a.id); };
   cta.querySelector("#ctaDemo").onclick = () => { closeSheet(); assetAction("demo", a.id); };
   cta.querySelector("#ctaToolkit").onclick = () => {
