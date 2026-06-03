@@ -1697,13 +1697,6 @@ function renderAsset(a, idx) {
   el.addEventListener("click", () => openAssetSheet(a));
   return el;
 }
-  el.querySelectorAll("[data-action]").forEach(b => {
-    b.onclick = (e) => { e.stopPropagation(); assetAction(b.dataset.action, a.id); };
-  });
-  // Whole card is clickable to open preview (except buttons)
-  el.addEventListener("click", () => openAssetSheet(a));
-  return el;
-}
 
 function themeToClass(theme) {
   switch (theme) {
