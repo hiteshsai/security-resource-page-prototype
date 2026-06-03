@@ -1223,33 +1223,38 @@ const ASSETS = [
   { id: "npf1", live: true, url: "https://aka.ms/MIP-Labeling-Assistant",
     title: "Guided Labeling Assistant",
     type: "Interactive tool", theme: "Trust AI with your Data", stages: ["Decide","Deploy"],
-    persona: ["presales","delivery"], industries: ["*"], sizes: ["Small","Mid","Enterprise"],
-    desc: "Guides organizations through Microsoft Purview sensitivity-label setup — from picking the right labels for your industry, to classifying specific documents, to exporting audit-ready plans. Built for partner-led customer engagements.",
+    persona: ["presales","delivery"],
+    industries: ["Healthcare","Financial Services","Legal","Retail","Manufacturing"],
+    sizes: ["Small","Mid"],
+    desc: "Turns Microsoft's Secure-by-Default labeling model into a working decision tool. Pick the customer's industry, select the data types they handle, confirm the applicable regulations — and a dynamic Reference / Exceptions / Examples view updates as you go. Use it live in a discovery workshop.",
     titanModule: null },
   { id: "npf2", live: true, url: "https://aka.ms/MIP-Industry-OnePagers",
-    title: "MIP Industry One-Pagers",
-    type: "Industry guide", theme: "Industry", stages: ["Position","Decide"],
-    persona: ["presales"], industries: ["Healthcare","Financial Services","Legal","Education","Retail"],
+    title: "Industry-Specific Information Protection Guides",
+    type: "Industry guide pack", theme: "Industry", stages: ["Position","Decide"],
+    persona: ["presales"],
+    industries: ["Healthcare","Financial Services","Legal","Education","Retail"],
     sizes: ["Small","Mid","Enterprise"],
-    desc: "Industry-specific MIP label recommendations for Healthcare, Financial Services, Legal, Education, and Retail. Ready to print and leave behind after a customer meeting.",
+    desc: "Five printable one-pagers (Healthcare, Financial Services, Legal, Education, Retail). Each gives the customer the labels their regulator expects, in their regulator's language. Leave-behind for the first meeting — partners report it shortens the second conversation by half.",
     titanModule: null },
   { id: "npf3", live: true, url: "https://aka.ms/SOW-Generator",
-    title: "SOW Generator",
+    title: "Microsoft Purview MIP — SOW Generator",
     type: "Interactive tool", theme: "Customer conversation", stages: ["Sell","Deploy"],
-    persona: ["presales","delivery"], industries: ["*"], sizes: ["Small","Mid","Enterprise"],
-    desc: "Configure customer-specific Purview deployment settings and generate a ready-to-send Statement of Work template — no copy-paste from old SOWs.",
+    persona: ["presales","delivery"],
+    industries: ["Healthcare","Financial Services","Legal","Manufacturing","Retail","Education","Public Sector","Professional Services"],
+    sizes: ["Small"],
+    desc: "Channel Partner Tool (v1). Fill in customer details, pick the M365 license tier, then tick services across three priorities — Foundation (audit, labels, DLP), Intermediate (retention), Advanced (auto-labeling, DLP for Copilot, DSPM, container labels, DKE). Outputs a ready-to-send SOW. Scoped for up to 300 users.",
     titanModule: null },
   { id: "npf4", live: true, url: "https://aka.ms/Deploy-Scripts",
-    title: "PowerShell Deployment Script for MIP",
+    title: "Purview Best Practice Deployment Script",
     type: "Script", theme: "Trust AI with your Data", stages: ["Deploy"],
-    persona: ["delivery"], industries: ["*"], sizes: ["Small","Mid","Enterprise"],
-    desc: "Automates MIP deployment in customer tenants — sensitivity labels, DLP policies, retention policies, and tenant settings. Idempotent, with rollback.",
+    persona: ["delivery"], industries: ["*"], sizes: ["Small","Mid"],
+    desc: "990-line modular PowerShell that deploys the Microsoft Purview baseline for Business Premium tenants. Five task modules: tenant settings · Personal → Highly Confidential labels · DLP for Exchange + SPO/OneDrive · 7-year mailbox retention · optional M365 Copilot DLP (AI_054). GDAP-aware so partners can run it across multiple customer tenants. Supports -WhatIf and -Confirm.",
     titanModule: null },
   { id: "npf5", live: true, url: "https://aka.ms/Github-CopilotCli-Guide",
-    title: "Quick Guide to GitHub Copilot CLI (with Microsoft Learn MCP)",
-    type: "Guide", theme: "Get Ready for AI", stages: ["Enable"],
+    title: "Quick Guide to GitHub Copilot CLI for Partners",
+    type: "Guide (PDF)", theme: "Get Ready for AI", stages: ["Enable"],
     persona: ["presales","delivery"], industries: ["*"], sizes: ["Small","Mid","Enterprise"],
-    desc: "Helps partners set up GitHub Copilot CLI with the Microsoft Learn MCP server, so they can use natural language to find answers from official Microsoft docs on M365 licensing and compliance.",
+    desc: "14-page setup guide that gets partners using GitHub Copilot CLI in their terminal — connected to the Microsoft Learn MCP Server — to settle M365 licensing and compliance questions in plain English. Installs in one command (winget, brew, npm, or curl). Built for use live in customer calls instead of \"I'll get back to you.\"",
     titanModule: null },
 
   // ============ Mock / illustrative assets ============
@@ -1838,70 +1843,62 @@ function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;"
 const PREVIEWS = {
   // ============ Live, partner-ready asset previews ============
   "npf1": { kind: "phases", items: [
-    { name: "1. Pick your industry",     t: "Step",  body: "Healthcare, Financial Services, Legal, Education, Retail — or general. The wizard pre-loads the recommended label taxonomy for your pick." },
-    { name: "2. Review the label set",   t: "Step",  body: "See each suggested label with description, business justification, and example documents. Add, remove, or rename in place." },
-    { name: "3. Classify sample documents", t: "Step", body: "Upload or pick from a sample library. The assistant walks through label decisions one document at a time — great for end-user training." },
-    { name: "4. Export the deployment plan", t: "Step", body: "Audit-ready PDF + JSON config. Hand the JSON to the Deployment Script (asset #4) to apply across the customer tenant." },
+    { name: "1. Pick the customer's industry", t: "Step", body: "Healthcare / Clinics · Financial Services & Insurance · Legal & Accounting · Retail & eCommerce · Manufacturing & Distribution · Other. Selecting industry pre-loads relevant data types and regulations." },
+    { name: "2. Select the data types in play", t: "Step", body: "Tick all that apply (e.g. PHI, PCI cardholder data, MNPI, privileged matter docs, student records). The dropdown is industry-aware." },
+    { name: "3. Confirm the applicable regulations", t: "Step", body: "Auto-suggested from the previous two steps — partner can add or remove (HIPAA, GLBA, PCI DSS, MiFID II, FERPA, etc.)." },
+    { name: "4. Run the decision flow", t: "Step", body: "Walk through Secure-by-Default label decisions one question at a time. The Reference, Exceptions, and Examples panels update dynamically as you answer." },
+    { name: "5. Output", t: "Use", body: "A grounded labeling plan with concrete examples — partners use it live in a discovery workshop to settle disagreements on the spot." },
   ]},
   "npf2": { kind: "crosswalk", items: [
-    { left: "Healthcare",         right: "HIPAA · HITECH · 21 CFR Part 11 — label set covers PHI, research data, billing records." },
-    { left: "Financial Services", right: "PCI DSS · FFIEC · MiFID II — labels for MNPI, trade data, client portfolios, cardholder data." },
-    { left: "Legal",              right: "Privilege · Work Product · Matter-bound — labels honor ethical walls and matter-level scoping." },
-    { left: "Education",          right: "FERPA · COPPA · student record protection — labels distinguish directory vs. educational records." },
-    { left: "Retail",             right: "PCI DSS · GDPR · CCPA — labels for cardholder data, customer PII, supplier contracts." },
+    { left: "Healthcare",         right: "HIPAA · HITECH · 42 CFR Part 2 — labels for PHI, research data, billing records. Includes 'Highly Confidential · PHI' encryption guidance." },
+    { left: "Financial Services", right: "GLBA · PCI DSS · FFIEC · MiFID II — labels for MNPI, trade data, client portfolios, cardholder data, KYC documents." },
+    { left: "Legal",              right: "Attorney-Client Privilege · Work Product · Matter-bound labels honoring ethical walls and matter-level scoping." },
+    { left: "Education",          right: "FERPA · COPPA · student record protection. Distinguishes directory information from educational records." },
+    { left: "Retail",             right: "PCI DSS · GDPR · CCPA — labels for cardholder data, customer PII, supplier contracts, store-ops documents." },
   ]},
   "npf3": { kind: "phases", items: [
-    { name: "Customer profile",   t: "Form", body: "Customer name, seat count, region, existing SKUs, target compliance frameworks. ~2 min to fill." },
-    { name: "Scope selection",    t: "Form", body: "Tick MIP, DLP, Retention, Insider Risk, eDiscovery — the SOW assembles the matching scope sections automatically." },
-    { name: "Deliverables & timeline", t: "Form", body: "Pick from preset milestones (Discovery → Pilot → Go-live) with editable durations and acceptance criteria." },
-    { name: "Generate",           t: "Output", body: "Outputs a customer-branded, partner-branded Word document — ready to send. ~30 sec to generate." },
+    { name: "1 · Engagement details",  t: "Form", body: "Partner name · customer name · prepared by · start date · duration (2 wk → 6+ mo managed service)." },
+    { name: "2 · Customer environment", t: "Form", body: "User count (caps at 300) · M365 license (Business Premium / + Purview Suite / + Defender & Purview) · industry (10 options) · existing MIP maturity (greenfield → mature)." },
+    { name: "3 · Foundation (Priority 1)", t: "8 services", body: "Audit logging · label taxonomy · label config · policy deployment · mandatory + default labels · end-user training · SPO/OneDrive labels · DLP for Exchange + SPO + OneDrive." },
+    { name: "4 · Intermediate (Priority 2)", t: "1 service", body: "Exchange retention policy (extendable to SPO, OneDrive, Teams)." },
+    { name: "5 · Advanced (Priority 3)", t: "14 services", body: "Custom SITs · client + service auto-labeling · label-based encryption / RMS · trainable classifiers · Content + Activity Explorer · container labels · on-prem scanner · DKE · MIP SDK · advanced analytics · DLP for Endpoints / Teams / Copilot · DSPM." },
+    { name: "6 · Engagement type", t: "Form", body: "One-time deployment / + 30-day hypercare / ongoing managed / assessment & roadmap. Optional managed services (health monitoring, policy tuning, compliance reporting, IR support)." },
+    { name: "Generate", t: "Output", body: "Customer-branded, partner-branded SOW Word document. Has a parallel Decision Tree view + JSON import/export for reuse across customers." },
   ]},
-  "npf4": { kind: "code", lang: "PowerShell", code:
-`# Deploy-PurviewBaseline.ps1
-# Applies the labels, DLP policies, retention, and tenant settings produced
-# by the Guided Labeling Assistant (asset #1) to a customer tenant.
+  "npf4": { kind: "code", lang: "PowerShell · Deploy-PurviewBestPractice.ps1 · 990 lines", code:
+`# Microsoft Purview Best Practice baseline for M365 Business Premium tenants
+# Modular — every task is also an independent script under .\\Modules.
 
-param(
-  [Parameter(Mandatory)] [string] $TenantId,
-  [Parameter(Mandatory)] [string] $LabelConfigPath,    # JSON from asset #1
-  [switch] $WhatIf,
-  [switch] $SkipRetention,
-  [string] $ReportPath = ".\\purview-deploy-report.html"
-)
+# Tasks (in order):
+#  1. Tenant settings    — audit log, AIP/SPO integration, PDF labels,
+#                          co-authoring (+ optional container labels, premium audit)
+#  2. Sensitivity labels — Personal, Public, General, Confidential (with the
+#                          AllEmployees sub-label), Highly Confidential — ordered,
+#                          encryption applied, published with General as default
+#  3. DLP                — separate Exchange and SPO + OneDrive policies that
+#                          block external sharing of Confidential\\AllEmployees
+#  4. Retention          — 7-year Exchange mailbox retain-then-delete
+#  5. AI governance      — OPT-IN: M365 Copilot DLP policies (e.g. AI_054 –
+#                          Block Copilot for Highly Confidential). Only when
+#                          -ApplyAIControls is supplied.
 
-Connect-ExchangeOnline -Organization $TenantId
-Connect-IPPSSession    -Organization $TenantId
+.\\Deploy-PurviewBestPractice.ps1 \`
+    -TenantAdminUpn        admin@fabrikam.onmicrosoft.com \`
+    -DelegatedOrganization fabrikam.com \`               # partner GDAP scenario
+    -ConfigPath            .\\Config\\PurviewConfig.psd1 \`
+    -ApplyAIControls \`                                  # turn on Copilot DLP
+    -WhatIf                                             # preview only — no changes
 
-$cfg = Get-Content $LabelConfigPath | ConvertFrom-Json
-
-Write-Host "Deploying $($cfg.labels.Count) sensitivity labels..."
-foreach ($l in $cfg.labels) {
-  if (Get-Label -Identity $l.name -ErrorAction SilentlyContinue) {
-    Set-Label -Identity $l.name -DisplayName $l.displayName -Tooltip $l.tooltip
-  } else {
-    if ($WhatIf) { Write-Host "WhatIf: would create label '$($l.name)'" }
-    else        { New-Label @l }
-  }
-}
-
-Write-Host "Publishing label policy..."
-New-LabelPolicy -Name "$($cfg.org) - Default" -Labels $cfg.labels.name -ExchangeLocation All
-
-Write-Host "Applying DLP policies..."
-foreach ($p in $cfg.dlp) { New-DlpCompliancePolicy @p }
-
-if (-not $SkipRetention) {
-  Write-Host "Applying retention..."
-  foreach ($r in $cfg.retention) { New-RetentionCompliancePolicy @r }
-}
-
-New-DeploymentReport -TenantId $TenantId -OutputPath $ReportPath
-Write-Host "Done. Report: $ReportPath"` },
+# Skip flags available:
+#   -SkipTenantSettings  -SkipLabels  -SkipDLP  -SkipAIControls
+# Use -Confirm for per-action prompts.` },
   "npf5": { kind: "phases", items: [
-    { name: "Install GitHub Copilot CLI", t: "5 min", body: "One command: gh extension install github/gh-copilot. Works on Windows, macOS, Linux." },
-    { name: "Add the Microsoft Learn MCP server", t: "5 min", body: "Drop a single config snippet to register the MCP server that fronts the Learn catalogue." },
-    { name: "Ask in natural language", t: "Use", body: "Examples: 'What SKU includes Defender for Identity?' · 'Show me the HIPAA crosswalk for Purview.' · 'How do I license Copilot for an SMB customer?' — answers cite the Learn page." },
-    { name: "Drop into customer calls", t: "Use", body: "Partners use it live in customer conversations to settle licensing questions on the spot instead of 'I'll get back to you.'" },
+    { name: "Prereqs", t: "Once", body: "Active GitHub Copilot subscription · Windows PowerShell v6+ (or any modern macOS / Linux terminal)." },
+    { name: "Install — pick your platform", t: "1 cmd", body: "Windows: winget install GitHub.Copilot · macOS / Linux: brew install copilot-cli · cross-platform: npm i -g @github/copilot · curl: curl -fsSL https://gh.io/copilot-install | bash" },
+    { name: "Launch & sign in", t: "30 sec", body: "Run copilot in the terminal. On first launch follow the on-screen prompts to authenticate with GitHub (or /login)." },
+    { name: "Connect Microsoft Learn MCP", t: "2 min", body: "Drop in the Learn MCP server config snippet — Copilot CLI now answers grounded in official Microsoft docs, no browser tab switching." },
+    { name: "Use it in a customer call", t: "Live", body: "Examples: 'Which SKU includes Defender for Identity?' · 'Show me the Purview deployment model for Business Premium.' · 'What licenses do I need to use Copilot DLP?' — each answer cites the Learn page." },
+    { name: "Heads-up", t: "Note", body: "Premium requests are metered. Every Copilot action previews before it runs — nothing executes without your approval." },
   ]},
 
   // ============ Mock previews ============
