@@ -1170,7 +1170,7 @@
 </main>
 
 <footer class="bottom">
-  Prototype · Concept extension of slide 5 in <em>Storyboard on AI-Powered Partner-Ready Assets</em> · For Pauline Lee review
+  Prototype — AI-powered partner toolkit · concept demo
 </footer>
 
 <!-- My Toolkit drawer -->
@@ -1219,7 +1219,7 @@
 // Mock asset corpus
 // =====================================================================
 const ASSETS = [
-  // ============ NPF Phase 1 — LIVE, shipping assets ============
+  // ============ Live, partner-ready assets ============
   { id: "npf1", live: true, url: "https://aka.ms/MIP-Labeling-Assistant",
     title: "Guided Labeling Assistant",
     type: "Interactive tool", theme: "Trust AI with your Data", stages: ["Decide","Deploy"],
@@ -1543,7 +1543,7 @@ function aiSummaryFor(q, theme, assets) {
   }
   const liveCount = assets.filter(a => a.live).length;
   const livePrefix = liveCount > 0
-    ? `<strong>${liveCount} of these are NPF Phase 1 assets shipping today</strong> — your partners can use them this week. `
+    ? `<strong>${liveCount} of these are ready to use today</strong> — open them straight into your customer conversation. `
     : "";
   const intro = `For this ${persona}, the strongest combination from the partner library is:`;
   const refs = assets.slice(0,3).map((a,i) => `<strong>${a.title}</strong><span class="citation-ref">${i+1}</span>`).join(", ");
@@ -1677,7 +1677,7 @@ function renderAsset(a, idx) {
       <span class="asset-rank">#${idx}</span>
     </div>
     <div class="asset-meta-row">
-      ${a.live ? `<span class="meta-badge live">✓ Live · NPF Phase 1</span>` : ""}
+      ${a.live ? `<span class="meta-badge live">✓ Available now</span>` : ""}
       <span class="meta-badge type">${escapeHtml(a.type)}</span>
       <span class="meta-badge ${themeClass}">${escapeHtml(a.theme)}</span>
       ${a.stages.map(s => `<span class="meta-badge">${s}</span>`).join("")}
@@ -1843,7 +1843,7 @@ function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;"
 // Asset previews — type-driven mock content
 // =====================================================================
 const PREVIEWS = {
-  // ============ NPF Phase 1 — real shipping assets ============
+  // ============ Live, partner-ready asset previews ============
   "npf1": { kind: "phases", items: [
     { name: "1. Pick your industry",     t: "Step",  body: "Healthcare, Financial Services, Legal, Education, Retail — or general. The wizard pre-loads the recommended label taxonomy for your pick." },
     { name: "2. Review the label set",   t: "Step",  body: "See each suggested label with description, business justification, and example documents. Add, remove, or rename in place." },
@@ -2075,14 +2075,14 @@ foreach ($t in (Get-Content tenants.yml | ConvertFrom-Yaml).tenants) {
 // =====================================================================
 const SCENARIOS = {
   "Help me kick off a Microsoft Purview deployment for a healthcare customer.": {
-    frame: "This is the sweet spot for everything NPF Phase 1 just shipped. You can take a partner from 'where do I start?' to 'SOW sent' in a single afternoon, with industry-tuned label guidance baked in.",
+    frame: "This is a Microsoft Purview kickoff you can run end-to-end with tools that are live today. You can take a partner from 'where do I start?' to 'SOW sent' in a single afternoon, with industry-tuned label guidance baked in.",
     play: "Open with the Healthcare industry one-pager (real labels, real examples) → walk the customer through the Guided Labeling Assistant → close by generating the SOW with the customer's specifics → hand the deployment script to the delivery team.",
     outcome: "SOW signed within the week; deployment script runs in a single afternoon.",
     time: "1 meeting to position · 1 working session to scope · 1 day to deploy",
     sequence: ["npf2","npf1","npf3","npf4"],
   },
   "Generate a SOW for a 500-seat customer wanting MIP + DLP.": {
-    frame: "Don't start from a blank Word doc. The NPF SOW Generator gives you a customer-specific, partner-branded starting point in minutes, then the deployment script makes the SOW deliverable.",
+    frame: "Don't start from a blank Word doc. The SOW Generator gives you a customer-specific, partner-branded starting point in minutes, then the deployment script makes the SOW deliverable.",
     play: "SOW Generator first (5 min) → review with the customer → deployment script for execution → the labeling assistant as a working session with their compliance lead.",
     outcome: "SOW out the door same-day, with a clear deployment path attached.",
     time: "Same-day SOW · 2-week deployment",
