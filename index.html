@@ -1754,7 +1754,7 @@ async function runSearch(q, opts = {}) {
     sb.innerHTML = `
       <div class="sb-eyebrow">✦ Scenario brief · curated for this prompt</div>
       <div class="sb-frame">${escapeHtml(brief.frame)}</div>
-      <div class="sb-row"><div class="sb-label">The play</div><div class="sb-val">${brief.play}</div></div>
+      <div class="sb-row"><div class="sb-label">The play</div><div class="sb-val">${escapeHtml(brief.play)}</div></div>
       <div class="sb-row"><div class="sb-label">Outcome</div><div class="sb-val">${escapeHtml(brief.outcome)}</div></div>
       <div class="sb-row"><div class="sb-label">Time</div><div class="sb-val">${escapeHtml(brief.time)}</div></div>
     `;
@@ -2238,7 +2238,7 @@ const SCENARIOS = {
   },
   "How can I help a customer identify shadow SaaS apps after a Copilot rollout?": {
     frame: "Customers say 'we approved Copilot' but their users are also using a long tail of other AI tools you haven't approved. That's the opening — not Copilot itself, but everything around it.",
-    play: "Open with discovery (don't pitch). Run the 5-min Shadow SaaS demo on <strong>their</strong> tenant. End on the OAuth consents view — it always lands.",
+    play: "Open with discovery, do not pitch. Run the 5-min Shadow SaaS demo on their tenant. End on the OAuth consents view, it always lands.",
     outcome: "A 30-min workshop on the customer's tenant, scheduled within 2 weeks, with the CIO + CISO both in the room.",
     time: "5 min to demo · 30 min to workshop · 2 weeks to close the pilot",
     sequence: ["a2","a1","a14","a6"],
